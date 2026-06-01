@@ -23,6 +23,8 @@ const LABELS: Record<string, Record<Lang, string>> = {
   relation:           { da: 'RELATION',            en: 'RELATION' },
   sceneHook:          { da: 'SCENEHOOK',           en: 'SCENE HOOK' },
 
+  // CharacterSheet — section labels
+  firstImpression:    { da: 'Første Indtryk',      en: 'First Impression' },
   // CharacterSheet — loading / empty state
   consulting:         { da: 'Konsulterer skæbnen…', en: 'Consulting the fates…' },
   generatePrompt:     { da: 'Genererer karakter…', en: 'Generating character…' },
