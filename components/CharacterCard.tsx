@@ -282,7 +282,7 @@ const CharacterCard = forwardRef<HTMLDivElement, Props>(function CharacterCard(
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.55, ease: 'easeOut' }}
       className="w-full"
-      style={{ position: 'relative', maxWidth: 960 }}
+      style={{ position: 'relative', maxWidth: 760 }}
     >
 
       {/* ── MOBILE layout (< md) ─────────────────────────────────────────── */}
