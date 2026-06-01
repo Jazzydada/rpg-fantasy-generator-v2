@@ -390,6 +390,13 @@ export default function CharacterGenerator() {
   const langRef = useRef<Lang>('da')
   useEffect(() => { langRef.current = lang }, [lang])
 
+  const autoPortraitFired = useRef(false)
+  useEffect(() => {
+    if (!character || autoPortraitFired.current) return
+    autoPortraitFired.current = true
+    triggerImage(character, quality, true)
+  }, [character, quality, triggerImage])
+
   useEffect(() => {
     const id = requestAnimationFrame(() => {
       generateNewCharacter(langRef.current)
