@@ -43,14 +43,14 @@ const SHADOW = [
 const VIGNETTE = [
   'radial-gradient(ellipse at 10% 5%, rgba(96,52,12,0.08) 0%, transparent 38%)',
   'radial-gradient(ellipse at 92% 94%, rgba(0,0,0,0.12) 0%, transparent 36%)',
-  'radial-gradient(ellipse at 50% 50%, transparent 42%, rgba(0,0,0,0.10) 78%, rgba(0,0,0,0.30) 100%)',
+  'radial-gradient(ellipse at 50% 50%, transparent 34%, rgba(0,0,0,0.17) 76%, rgba(0,0,0,0.44) 100%)',
 ].join(',')
 
 // ─── Reusable overlay primitives (no per-render style-object churn) ─────────
 const grainStyle: React.CSSProperties = {
   position: 'absolute', inset: 0, pointerEvents: 'none',
   backgroundImage: GLOBAL_GRAIN, backgroundSize: '512px 512px',
-  mixBlendMode: 'overlay', opacity: 0.30,
+  mixBlendMode: 'overlay', opacity: 0.58,
 }
 const vignetteStyle: React.CSSProperties = {
   position: 'absolute', inset: 0, pointerEvents: 'none', background: VIGNETTE,
@@ -73,10 +73,10 @@ function CardBorder({ zIndex }: { zIndex: number }) {
 
 const appearanceLabelStyle: React.CSSProperties = { color: 'rgba(201,168,76,0.45)' }
 const appearanceTextStyle: React.CSSProperties = {
-  fontSize: 'clamp(0.68rem, 1.05vw, 0.80rem)',
-  color: 'rgba(239,224,189,0.94)',
-  letterSpacing: '0.02em',
-  lineHeight: 1.45,
+  fontSize: 'clamp(0.58rem, 1.1vw, 0.70rem)',
+  color: 'rgba(218,195,145,0.85)',
+  letterSpacing: '0.04em',
+  lineHeight: 1.4,
 }
 function AppearanceReroll({ onClick }: { onClick?: () => void }) {
   if (!onClick) return null
@@ -131,7 +131,7 @@ const CharacterCard = forwardRef<HTMLDivElement, Props>(function CharacterCard(
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.55, ease: 'easeOut' }}
       className="w-full"
-      style={{ position: 'relative', maxWidth: 920 }}
+      style={{ position: 'relative', maxWidth: 760 }}
     >
 
       {/* ── MOBILE layout (< md) ─────────────────────────────────────────── */}
@@ -215,7 +215,7 @@ const CharacterCard = forwardRef<HTMLDivElement, Props>(function CharacterCard(
       </div>
 
       {/* ── DESKTOP layout (≥ md) ────────────────────────────────────────── */}
-      {/* 60% text sheet / 40% portrait — wider text panel for readability */}
+      {/* 70% text sheet / 30% portrait — wider text panel for readability */}
       <div
         className="hidden md:flex"
         style={{
@@ -226,9 +226,9 @@ const CharacterCard = forwardRef<HTMLDivElement, Props>(function CharacterCard(
           boxShadow: SHADOW,
         }}
       >
-        {/* Left text sheet — 62% width */}
+        {/* Left text sheet — 60% width */}
         <div style={{
-          width: '62%',
+          width: '70%',
           flexShrink: 0,
           height: '100%',
           zIndex: 10,
@@ -240,11 +240,11 @@ const CharacterCard = forwardRef<HTMLDivElement, Props>(function CharacterCard(
 
         {/* Thin divider line */}
         <div aria-hidden style={{
-          position: 'absolute', top: 0, bottom: 0, left: '62%',
+          position: 'absolute', top: 0, bottom: 0, left: '70%',
           width: 1, background: 'rgba(201,168,76,0.14)', zIndex: 12, pointerEvents: 'none',
         }} />
 
-        {/* Right portrait panel — 38% width, framed with padding */}
+        {/* Right portrait panel — 40% width, framed with padding */}
         <div style={{
           flex: 1,
           height: '100%',
@@ -254,11 +254,11 @@ const CharacterCard = forwardRef<HTMLDivElement, Props>(function CharacterCard(
           flexDirection: 'column',
         }}>
           {/* Portrait with inner padding — not full-bleed */}
-          <div style={{ flex: 1, padding: '20px 18px 6px', position: 'relative', minHeight: 0 }}>
+          <div style={{ flex: 1, padding: '28px 20px 10px', position: 'relative', minHeight: 0 }}>
             <div style={{
               position: 'relative',
               height: '100%',
-              border: '1px solid rgba(201,168,76,0.26)',
+              border: '1px solid rgba(201,168,76,0.18)',
               overflow: 'hidden',
             }}>
               <PortraitPanel key={imageUrl ?? 'empty'} {...portraitProps} />
@@ -267,7 +267,7 @@ const CharacterCard = forwardRef<HTMLDivElement, Props>(function CharacterCard(
 
           {/* Appearance caption below portrait */}
           {character && !isGenerating && (
-            <div style={{ padding: '8px 18px 14px', flexShrink: 0 }}>
+            <div style={{ padding: '10px 20px 18px', flexShrink: 0 }}>
               <AppearanceLine text={trAppearance(character, lang)} lang={lang} />
             </div>
           )}

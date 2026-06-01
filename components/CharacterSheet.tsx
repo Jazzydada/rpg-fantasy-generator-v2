@@ -28,7 +28,7 @@ const PANEL_BG = [
   'radial-gradient(ellipse at 90% 4%, rgba(54,26,6,0.58) 0%, transparent 42%)',
   'radial-gradient(ellipse at 4% 96%, rgba(64,30,6,0.64) 0%, transparent 45%)',
   'radial-gradient(ellipse at 52% 52%, rgba(30,15,4,0.40) 0%, transparent 62%)',
-  'linear-gradient(172deg, #2d2111 0%, #21170b 36%, #160f07 74%, #0b0704 100%)',
+  'linear-gradient(172deg, #271c0e 0%, #1c1309 36%, #110b05 74%, #0a0604 100%)',
 ].join(',')
 
 const ABILITY_ROWS = [
@@ -105,9 +105,9 @@ function traitIcon(label: string): IconType {
 }
 
 function scaleName(name: string) {
-  if (name.length > 20) return 'clamp(0.92rem, 1.85vw, 1.22rem)'
-  if (name.length > 15) return 'clamp(1.02rem, 2.05vw, 1.35rem)'
-  return 'clamp(1.14rem, 2.35vw, 1.58rem)'
+  if (name.length > 20) return 'clamp(0.72rem, 1.85vw, 1.02rem)'
+  if (name.length > 15) return 'clamp(0.82rem, 2.05vw, 1.15rem)'
+  return 'clamp(0.95rem, 2.35vw, 1.34rem)'
 }
 
 // Sub-title under the name: "Skovsalv · Præst" or "Halvling (Stouthjerte) · Warlock".
@@ -115,9 +115,9 @@ function scaleName(name: string) {
 // + decorative lines so it always fits one line in the narrow side panel.
 function scaleSubtitle(species: string, characterClass: string) {
   const total = species.length + characterClass.length
-  if (total > 30) return { fontSize: 'clamp(0.50rem, 0.86vw, 0.62rem)', letterSpacing: '0.05em', lineWidth: 10 }
-  if (total > 22) return { fontSize: 'clamp(0.54rem, 0.96vw, 0.68rem)', letterSpacing: '0.08em', lineWidth: 14 }
-  return                  { fontSize: 'clamp(0.58rem, 1.08vw, 0.74rem)', letterSpacing: '0.11em', lineWidth: 22 }
+  if (total > 30) return { fontSize: 'clamp(0.40rem, 0.86vw, 0.50rem)', letterSpacing: '0.06em', lineWidth: 8 }
+  if (total > 22) return { fontSize: 'clamp(0.44rem, 0.96vw, 0.55rem)', letterSpacing: '0.09em', lineWidth: 12 }
+  return                  { fontSize: 'clamp(0.48rem, 1.08vw, 0.62rem)', letterSpacing: '0.13em', lineWidth: 18 }
 }
 
 function Rule({ label }: { label?: string }) {
@@ -159,7 +159,7 @@ function RerollButton({ onClick, title = 'Reroll' }: { onClick?: () => void; tit
 
 function InfoLine({ label, value, indent = false }: { label: string; value: string; indent?: boolean }) {
   return (
-    <div style={{ display: 'flex', gap: 4, paddingLeft: indent ? 9 : 0, fontSize: 'clamp(0.76rem, 1.18vw, 0.88rem)', lineHeight: 1.48 }}>
+    <div style={{ display: 'flex', gap: 4, paddingLeft: indent ? 9 : 0, fontSize: 'clamp(0.63rem, 1.25vw, 0.75rem)', lineHeight: 1.5 }}>
       {label && <span className="font-cinzel" style={{ flexShrink: 0, color: '#d4b560', fontWeight: 700 }}>{label}:</span>}
       <span className="font-crimson" style={{ color: '#ede0c0' }}>{value}</span>
     </div>
@@ -234,18 +234,18 @@ function CombatBox({ character, lang = 'da' }: { character: Character; lang?: La
       </div>
       <div style={{ position: 'relative', zIndex: 1, color: '#1f0e05' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 4, marginBottom: 5 }}>
-          <strong className="font-cinzel" style={{ fontSize: 'clamp(0.74rem,1.18vw,0.86rem)' }}>AC {c.armorClass}</strong>
-          <strong className="font-cinzel" style={{ fontSize: 'clamp(0.74rem,1.18vw,0.86rem)' }}>HP {c.hitPoints}</strong>
-          <strong className="font-cinzel" style={{ fontSize: 'clamp(0.74rem,1.18vw,0.86rem)' }}>Init {c.initiative}</strong>
-          <span className="font-crimson" style={{ fontSize: 'clamp(0.74rem,1.18vw,0.86rem)' }}>Speed {c.speed}</span>
-          <span className="font-crimson" style={{ fontSize: 'clamp(0.74rem,1.18vw,0.86rem)' }}>PP {c.passivePerception}</span>
-          <span className="font-crimson" style={{ fontSize: 'clamp(0.74rem,1.18vw,0.86rem)' }}>CR {c.challenge}</span>
+          <strong className="font-cinzel" style={{ fontSize: 'clamp(0.62rem,1.25vw,0.72rem)' }}>AC {c.armorClass}</strong>
+          <strong className="font-cinzel" style={{ fontSize: 'clamp(0.62rem,1.25vw,0.72rem)' }}>HP {c.hitPoints}</strong>
+          <strong className="font-cinzel" style={{ fontSize: 'clamp(0.62rem,1.25vw,0.72rem)' }}>Init {c.initiative}</strong>
+          <span className="font-crimson" style={{ fontSize: 'clamp(0.62rem,1.25vw,0.72rem)' }}>Speed {c.speed}</span>
+          <span className="font-crimson" style={{ fontSize: 'clamp(0.62rem,1.25vw,0.72rem)' }}>PP {c.passivePerception}</span>
+          <span className="font-crimson" style={{ fontSize: 'clamp(0.62rem,1.25vw,0.72rem)' }}>CR {c.challenge}</span>
         </div>
-        <div className="font-crimson" style={{ fontSize: 'clamp(0.74rem,1.18vw,0.86rem)', lineHeight: 1.35 }}>
+        <div className="font-crimson" style={{ fontSize: 'clamp(0.62rem,1.25vw,0.72rem)', lineHeight: 1.35 }}>
           <div><b>Melee:</b> {c.melee.name} {c.melee.toHit} · {c.melee.damage}</div>
           <div><b>Range:</b> {c.ranged.name} {c.ranged.toHit} · {c.ranged.damage} · {c.ranged.notes}</div>
         </div>
-        <div className="font-crimson" style={{ fontSize: 'clamp(0.70rem,1.10vw,0.80rem)', lineHeight: 1.30, marginTop: 4 }}>
+        <div className="font-crimson" style={{ fontSize: 'clamp(0.60rem,1.18vw,0.68rem)', lineHeight: 1.30, marginTop: 4 }}>
           {c.specialAbilities.slice(0, 2).map((a) => <div key={a}>✦ {a}</div>)}
         </div>
         <StatMiniRow character={character} />
@@ -257,17 +257,17 @@ function CombatBox({ character, lang = 'da' }: { character: Character; lang?: La
 function TraitRow({ label, text, onReroll }: { label: string; text: string; onReroll?: () => void }) {
   const Icon = traitIcon(label)
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '30px 1fr', columnGap: 8, marginTop: 9, alignItems: 'start' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: '27px 1fr', columnGap: 8, marginTop: 9, alignItems: 'start' }}>
       <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 3 }}>
         <Icon size={22} strokeWidth={1.55} style={{ color: '#d6b56d', opacity: 0.86, filter: 'drop-shadow(0 1px 1px rgba(0,0,0,0.7))' }} />
       </div>
       <div style={{ minWidth: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
-          <h3 className="font-cinzel" style={{ color: '#d7bd83', fontSize: 'clamp(0.74rem, 1.14vw, 0.86rem)', lineHeight: 1, letterSpacing: '0.08em', fontWeight: 700 }}>{label}</h3>
+          <h3 className="font-cinzel" style={{ color: '#d7bd83', fontSize: 'clamp(0.62rem, 1.20vw, 0.72rem)', lineHeight: 1, letterSpacing: '0.08em', fontWeight: 700 }}>{label}</h3>
           <span style={{ flex: 1, height: 1, background: 'linear-gradient(to right, rgba(181,136,65,0.42), transparent)' }} />
           <RerollButton onClick={onReroll} />
         </div>
-        <p className="font-crimson" style={{ color: '#e1d2b2', fontSize: 'clamp(0.80rem, 1.20vw, 0.92rem)', lineHeight: 1.44, margin: 0 }}>{text}</p>
+        <p className="font-crimson" style={{ color: '#e1d2b2', fontSize: 'clamp(0.68rem, 1.30vw, 0.78rem)', lineHeight: 1.42, margin: 0 }}>{text}</p>
       </div>
     </div>
   )
@@ -314,11 +314,11 @@ function NpcLine({ label, text, onReroll }: { label: string; text: string; onRer
   return (
     <div style={{ marginTop: 6 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-        <div className="font-cinzel" style={{ color: 'rgba(214,183,112,0.55)', fontSize: 'clamp(0.70rem, 1.04vw, 0.80rem)', letterSpacing: '0.13em', lineHeight: 1.1 }}>{label}</div>
+        <div className="font-cinzel" style={{ color: 'rgba(214,183,112,0.55)', fontSize: 'clamp(0.58rem, 1.10vw, 0.66rem)', letterSpacing: '0.13em', lineHeight: 1.1 }}>{label}</div>
         <span style={{ flex: 1 }} />
         <RerollButton onClick={onReroll} />
       </div>
-      <p className="font-crimson" style={{ color: '#e0d0ae', fontSize: 'clamp(0.79rem, 1.18vw, 0.90rem)', lineHeight: 1.42, margin: '1px 0 0' }}>{text}</p>
+      <p className="font-crimson" style={{ color: '#e0d0ae', fontSize: 'clamp(0.67rem, 1.28vw, 0.76rem)', lineHeight: 1.40, margin: '1px 0 0' }}>{text}</p>
     </div>
   )
 }
@@ -349,7 +349,7 @@ function QuickHook({ character, onRerollField, lang = 'da' }: { character: Chara
   return (
     <div style={{ marginTop: 10 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><Rule label={t(lang, 'sceneHook')} /><RerollButton onClick={() => onRerollField?.('sceneHook')} /></div>
-      <p className="font-crimson italic" style={{ color: '#d7c28c', fontSize: 'clamp(0.78rem, 1.16vw, 0.88rem)', lineHeight: 1.42, margin: 0 }}>
+      <p className="font-crimson italic" style={{ color: '#d7c28c', fontSize: 'clamp(0.66rem, 1.26vw, 0.75rem)', lineHeight: 1.38, margin: 0 }}>
         {tr(character, lang, 'sceneHook')}
       </p>
     </div>
@@ -359,9 +359,9 @@ function QuickHook({ character, onRerollField, lang = 'da' }: { character: Chara
 function Emblem({ character, pushToBottom = true }: { character: Character; pushToBottom?: boolean }) {
   const Icon = getEmblemIcon(character)
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', marginTop: pushToBottom ? 'auto' : 16, paddingBottom: 8, paddingTop: 10 }}>
+    <div style={{ display: 'flex', justifyContent: 'center', marginTop: pushToBottom ? 'auto' : 16, paddingBottom: 12, paddingTop: 14 }}>
       <div style={{
-        position: 'relative', width: 58, height: 58, borderRadius: '50%',
+        position: 'relative', width: 72, height: 72, borderRadius: '50%',
         display: 'grid', placeItems: 'center',
         background: [
           'radial-gradient(circle at 34% 28%, rgba(255,226,166,0.45) 0%, transparent 38%)',
@@ -375,7 +375,7 @@ function Emblem({ character, pushToBottom = true }: { character: Character; push
         <div style={{ position: 'absolute', inset: 12, borderRadius: '50%', border: '1px solid rgba(48,23,7,0.28)' }} />
         <div style={{ position: 'absolute', inset: 18, borderRadius: '50%', border: '0.6px dashed rgba(48,23,7,0.22)' }} />
         <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', backgroundImage: NOISE_PARCH, mixBlendMode: 'multiply', opacity: 0.55 }} />
-        <Icon size={25} strokeWidth={1.25} style={{ color: '#241003', filter: 'drop-shadow(0 1px 0 rgba(255,216,142,0.22))' }} />
+        <Icon size={30} strokeWidth={1.25} style={{ color: '#241003', filter: 'drop-shadow(0 1px 0 rgba(255,216,142,0.22))' }} />
       </div>
     </div>
   )
@@ -408,7 +408,7 @@ export default function CharacterSheet({ character, isGenerating, layout = 'pane
         'radial-gradient(ellipse at 50% 100%, transparent 42%, rgba(0,0,0,0.42) 100%)',
       ].join(',') }} />
 
-      <div style={{ position: 'relative', zIndex: 2, height: isStacked ? 'auto' : '100%', display: 'flex', flexDirection: 'column', padding: isStacked ? '22px 22px 18px' : '22px 22px 14px 22px' }}>
+      <div style={{ position: 'relative', zIndex: 2, height: isStacked ? 'auto' : '100%', display: 'flex', flexDirection: 'column', padding: isStacked ? '20px 20px 16px' : '18px 16px 10px 16px' }}>
         <div style={{ textAlign: 'center', paddingTop: 2, position: 'relative' }}>
           <div style={{ padding: '0 24px' }}>
             <h1 className="font-cinzel-decorative uppercase" style={{ color: '#efe0bd', textShadow: '0 1px 9px rgba(0,0,0,0.96)', fontWeight: 900, fontSize: scaleName(character.name), letterSpacing: '0.045em', lineHeight: 0.96, wordBreak: 'break-word', margin: 0 }}>
@@ -432,7 +432,7 @@ export default function CharacterSheet({ character, isGenerating, layout = 'pane
           })()}
         </div>
 
-        <div className="font-crimson italic" style={{ marginTop: 9, color: '#d8c394', fontSize: 'clamp(0.80rem, 1.18vw, 0.92rem)', lineHeight: 1.42, textAlign: 'center' }}>
+        <div className="font-crimson italic" style={{ marginTop: 9, color: '#d8c394', fontSize: 'clamp(0.67rem, 1.28vw, 0.76rem)', lineHeight: 1.38, textAlign: 'center' }}>
           {tr(character, lang, 'firstImpression')}
         </div>
 
