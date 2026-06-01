@@ -1,0 +1,290 @@
+'use client'
+
+import { useState, useCallback, useRef, useEffect, memo } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import type { Character } from '@/lib/types'
+
+interface Props {
+  character: Character | null
+  imageUrl: string | null
+  isLoadingImage: boolean
+  imageStartedAt: number | null
+  quality: 'fast' | 'high'
+  onImageLoad: () => void
+  onZoom: () => void
+}
+
+const LOADING_RUNES = ['ᚠ', 'ᚢ', 'ᚦ', 'ᚨ', 'ᚱ', 'ᚲ', 'ᚷ', 'ᚹ', 'ᚺ', 'ᚾ', 'ᛁ', 'ᛃ']
+
+function PortraitPanel({ character, imageUrl, isLoadingImage, imageStartedAt, quality, onImageLoad, onZoom }: Props) {
+  // Remounted fresh for each imageUrl via key={imageUrl ?? 'empty'} in CharacterCard.
+  const [imgLoaded, setImgLoaded] = useState(false)
+  const [imgError,  setImgError]  = useState(false)
+  const [retryKey,  setRetryKey]  = useState(0)
+  const retryCount = useRef(0)
+  const [elapsed, setElapsed] = useState(0)
+
+  useEffect(() => {
+    if (!isLoadingImage || !imageStartedAt) {
+      setElapsed(0)
+      return
+    }
+    const tick = () => setElapsed(Math.max(0, Math.floor((Date.now() - imageStartedAt) / 1000)))
+    tick()
+    const id = window.setInterval(tick, 1000)
+    return () => window.clearInterval(id)
+  }, [isLoadingImage, imageStartedAt])
+
+  const handleLoad = useCallback(() => {
+    setImgLoaded(true)
+    onImageLoad()
+  }, [onImageLoad])
+
+  // Pollinations returns a non-image response while generating — retry up to 5×.
+  const handleError = useCallback(() => {
+    if (retryCount.current < 5) {
+      retryCount.current += 1
+      setTimeout(() => setRetryKey(k => k + 1), 3000)
+    } else {
+      setImgError(true)
+      onImageLoad()
+    }
+  }, [onImageLoad])
+
+  const showLoading = !!character && isLoadingImage && !imgError
+  const estimate = quality === 'high' ? 28 : 20
+  const remaining = Math.max(0, estimate - elapsed)
+  const progress = Math.min(100, Math.round((elapsed / estimate) * 100))
+
+  return (
+    <div
+      className="relative h-full w-full overflow-hidden group"
+      style={{ background: '#0a0806', cursor: imgLoaded ? 'pointer' : 'default' }}
+      onClick={imgLoaded ? onZoom : undefined}
+    >
+      {/* ── Hidden preloader ──────────────────────────────────────────────────
+           crossOrigin="anonymous" ensures the browser caches the image with CORS
+           headers from our /api/portrait proxy (which returns ACAO:*).
+           This prevents html2canvas from getting a tainted canvas on export. */}
+      {imageUrl && character && (
+        <img
+          key={retryKey}
+          src={imageUrl}
+          alt=""
+          crossOrigin="anonymous"
+          onLoad={handleLoad}
+          onError={handleError}
+          aria-hidden
+          style={{ position: 'absolute', width: 1, height: 1, opacity: 0, pointerEvents: 'none' }}
+        />
+      )}
+
+      {/* ── Full-bleed portrait ─────────────────────────────────────────────
+           Uses CSS transition (not Framer Motion) so opacity completes even
+           when requestAnimationFrame is throttled in sandboxed/background tabs.
+           crossOrigin="anonymous" lets html2canvas export without tainted canvas. */}
+      {character && imageUrl && (
+        <div
+          className="absolute inset-0 overflow-hidden"
+          style={{
+            opacity: imgLoaded ? 1 : 0,
+            transition: imgLoaded ? 'opacity 0.9s ease-in' : 'none',
+            willChange: 'opacity',
+          }}
+        >
+          {/* START PORTRAIT FIX
+               Replaces the blurred-duplicate background with a clean dark fantasy
+               gradient. The blurred layer looked broken whenever the generated image
+               didn't fill the full frame height (e.g. a full-body character in a
+               portrait-ratio crop left large blurred bars at the sides/bottom).
+
+               Solution:
+               - Clean dark radial gradient background — looks intentional, matches UI
+               - Single sharp img with object-contain + center center
+               - Never stretches or distorts the image
+               - Never crops head or feet
+               - PNG export: only one image layer to composite → no blurred ghost */}
+
+          {/* Dark fantasy background fill — replaces blurred duplicate */}
+          <div
+            aria-hidden
+            data-export-hide="false"
+            style={{
+              position: 'absolute', inset: 0,
+              background: 'radial-gradient(ellipse at 50% 38%, rgba(22,14,5,1) 0%, rgba(8,6,3,1) 65%, rgba(4,3,2,1) 100%)',
+            }}
+          />
+
+          {/* START PORTRAIT FIX — object-fit:contain, never stretch
+               Black bars are acceptable. Stretching is not.
+               object-contain preserves aspect ratio exactly.
+               object-position center center keeps the character centred.
+               The dark gradient background fills any empty bars. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={imageUrl}
+            alt={character.name}
+            crossOrigin="anonymous"
+            style={{
+              position: 'absolute', inset: 0,
+              width: '100%', height: '100%',
+              objectFit: 'contain',
+              objectPosition: 'center center',
+              display: 'block',
+            }}
+          />
+          {/* END PORTRAIT FIX */}
+          {/* END PORTRAIT FIX */}
+        </div>
+      )}
+
+      {/* START PORTRAIT ON DEMAND SYSTEM — placeholder */}
+      {/* Shown when a character exists but no portrait has been generated yet */}
+      {character && !imageUrl && !isLoadingImage && (
+        <div
+          className="absolute inset-0 flex flex-col items-center justify-center gap-4"
+          style={{ background: 'radial-gradient(ellipse at 50% 38%, rgba(22,14,5,1) 0%, rgba(6,4,2,1) 100%)' }}
+        >
+          {/* Decorative rune border */}
+          <div style={{
+            position: 'absolute', inset: 20,
+            border: '1px solid rgba(201,168,76,0.12)',
+            pointerEvents: 'none',
+          }} />
+          <div style={{
+            position: 'absolute', inset: 24,
+            border: '1px solid rgba(201,168,76,0.06)',
+            pointerEvents: 'none',
+          }} />
+          {/* Corner ornaments */}
+          {[['0','0','right','bottom'],['0','auto','right','auto'],['auto','0','auto','bottom'],['auto','auto','auto','auto']].map(([t,b,br,bb], i) => (
+            <div key={i} style={{
+              position: 'absolute', top: t === 'auto' ? 'auto' : 20, bottom: b === 'auto' ? 'auto' : 20,
+              right: br === 'auto' ? 'auto' : 20, left: br === 'right' ? 'auto' : (b === 'auto' ? 20 : 20),
+              width: 14, height: 14,
+              borderTop: (i < 2) ? '1px solid rgba(201,168,76,0.35)' : 'none',
+              borderBottom: (i >= 2) ? '1px solid rgba(201,168,76,0.35)' : 'none',
+              borderLeft: (i === 0 || i === 2) ? '1px solid rgba(201,168,76,0.35)' : 'none',
+              borderRight: (i === 1 || i === 3) ? '1px solid rgba(201,168,76,0.35)' : 'none',
+            }} />
+          ))}
+          {/* Central icon */}
+          <div style={{ color: 'rgba(201,168,76,0.18)', fontSize: '2.5rem', lineHeight: 1 }}>✦</div>
+          <div style={{ textAlign: 'center', padding: '0 24px' }}>
+            <p className="font-cinzel uppercase tracking-widest" style={{ fontSize: '0.55rem', color: 'rgba(201,168,76,0.3)', letterSpacing: '0.22em', marginBottom: 6 }}>
+              {character.name}
+            </p>
+            <p className="font-crimson italic" style={{ fontSize: '0.68rem', color: 'rgba(201,168,76,0.2)', lineHeight: 1.4 }}>
+              Klik &ldquo;Lav portræt&rdquo; for at generere et portræt
+            </p>
+          </div>
+        </div>
+      )}
+      {/* END PORTRAIT ON DEMAND SYSTEM */}
+
+      {/* Cinematic vignette — fades in with portrait */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          opacity: imgLoaded ? 1 : 0,
+          transition: imgLoaded ? 'opacity 0.9s ease-in' : 'none',
+          background: `
+            radial-gradient(ellipse at 70% 40%, transparent 38%, rgba(0,0,0,0.12) 100%),
+            linear-gradient(to left, transparent 46%, rgba(0,0,0,0.10) 100%)
+          `,
+        }}
+      />
+
+      {/* ── Loading animation ─────────────────────────────────────────────── */}
+      <AnimatePresence>
+        {showLoading && (
+          <motion.div
+            key="loading"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="absolute inset-0 flex flex-col items-center justify-center gap-5"
+            style={{ background: '#0a0806', zIndex: 5 }}
+          >
+            <div className="relative w-28 h-28">
+              {LOADING_RUNES.map((rune, i) => {
+                const angle = (i / LOADING_RUNES.length) * 360
+                const rad   = (angle * Math.PI) / 180
+                const x = 50 + 40 * Math.cos(rad)
+                const y = 50 + 40 * Math.sin(rad)
+                return (
+                  <motion.span
+                    key={i}
+                    animate={{ opacity: [0.15, 0.7, 0.15] }}
+                    transition={{ duration: 2.2, delay: i * 0.16, repeat: Infinity }}
+                    className="absolute font-cinzel"
+                    style={{
+                      left: `${x}%`, top: `${y}%`,
+                      transform: 'translate(-50%, -50%)',
+                      fontSize: '0.7rem',
+                      color: 'rgba(201,168,76,0.6)',
+                    }}
+                  >
+                    {rune}
+                  </motion.span>
+                )
+              })}
+              <motion.div animate={{ rotate: 360 }} transition={{ duration: 9, repeat: Infinity, ease: 'linear' }}
+                className="absolute inset-2 rounded-full"
+                style={{ border: '1px solid rgba(201,168,76,0.18)' }} />
+              <motion.div animate={{ rotate: -360 }} transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
+                className="absolute inset-6 rounded-full"
+                style={{ border: '1px solid rgba(201,168,76,0.12)' }} />
+            </div>
+            <div className="text-center">
+              <p className="font-cinzel tracking-widest"
+                style={{ fontSize: '0.6rem', color: 'rgba(201,168,76,0.48)' }}>
+                Maner portræt frem…
+              </p>
+              <p className="font-crimson italic mt-1"
+                style={{ fontSize: '0.68rem', color: 'rgba(201,168,76,0.34)' }}>
+                {elapsed < estimate ? `ca. ${remaining}s tilbage` : `stadig i gang · ${elapsed}s`}
+              </p>
+              <div className="mt-3 h-px w-40 overflow-hidden" style={{ background: 'rgba(201,168,76,0.13)' }}>
+                <div style={{ width: `${progress}%`, height: '100%', background: 'rgba(201,168,76,0.48)', transition: 'width 0.35s ease' }} />
+              </div>
+              <p className="font-cinzel mt-2" style={{ fontSize: '0.48rem', letterSpacing: '0.13em', color: 'rgba(201,168,76,0.22)' }}>
+                {quality === 'high' ? 'Perchance high quality → fallback' : 'Perchance → fallback'}
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Error state ───────────────────────────────────────────────────── */}
+      {imgError && character && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6">
+          <div className="w-14 h-14 flex items-center justify-center"
+            style={{ border: '1px solid rgba(201,168,76,0.18)', color: 'rgba(201,168,76,0.3)' }}>
+            <span style={{ fontSize: '1.5rem' }}>⚔</span>
+          </div>
+          <p className="font-cinzel text-center"
+            style={{ fontSize: '0.6rem', color: 'rgba(201,168,76,0.3)', letterSpacing: '0.1em' }}>
+            Portræt utilgængeligt
+          </p>
+          <p className="font-crimson italic text-center leading-relaxed"
+            style={{ fontSize: '0.65rem', color: 'rgba(201,168,76,0.18)', maxWidth: '180px' }}>
+            Prøv "Nyt portræt" igen
+          </p>
+        </div>
+      )}
+
+      {/* ── Zoom hint ─────────────────────────────────────────────────────── */}
+      {imgLoaded && (
+        <div
+          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity px-2 py-1"
+          style={{ background: 'rgba(0,0,0,0.6)', border: '1px solid rgba(201,168,76,0.25)', zIndex: 6 }}
+        >
+          <span className="font-cinzel" style={{ fontSize: '0.5rem', color: 'rgba(201,168,76,0.7)', letterSpacing: '0.12em' }}>
+            ⊕ FORSTØR
+          </span>
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default memo(PortraitPanel)
