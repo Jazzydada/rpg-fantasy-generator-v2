@@ -96,6 +96,157 @@ function AppearanceLine({ text, onReroll, lang = 'da' }: { text: string; onRerol
   )
 }
 
+
+
+const cleanTextStyle: React.CSSProperties = {
+  color: '#efe6cf',
+  fontSize: 'clamp(0.86rem, 1.55vw, 1.02rem)',
+  lineHeight: 1.42,
+}
+
+function SmallReroll({ onClick, title = 'Reroll' }: { onClick?: () => void; title?: string }) {
+  if (!onClick) return null
+  return (
+    <button type="button" onClick={(e) => { e.stopPropagation(); onClick() }} title={title} style={{
+      width: 22, height: 22, display: 'inline-grid', placeItems: 'center', borderRadius: '50%',
+      border: '1px solid rgba(201,168,76,0.35)', background: 'rgba(10,7,3,0.55)', color: '#d8b867', cursor: 'pointer', flexShrink: 0,
+    }}>
+      <RefreshCw size={12} strokeWidth={1.9} />
+    </button>
+  )
+}
+
+function InfoCard({ title, children, onReroll, accent = false }: { title: string; children: React.ReactNode; onReroll?: () => void; accent?: boolean }) {
+  return (
+    <section style={{
+      position: 'relative',
+      padding: accent ? '12px 13px' : '10px 12px',
+      border: accent ? '1px solid rgba(63,38,12,0.65)' : '1px solid rgba(201,168,76,0.25)',
+      background: accent
+        ? 'linear-gradient(145deg, #d9bd84 0%, #b98745 100%)'
+        : 'linear-gradient(145deg, rgba(31,20,10,0.88), rgba(12,8,4,0.88))',
+      boxShadow: 'inset 0 0 18px rgba(0,0,0,0.38), 0 3px 12px rgba(0,0,0,0.24)',
+      minWidth: 0,
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+        <h3 className="font-cinzel" style={{
+          margin: 0,
+          color: accent ? '#2a1304' : '#d8b867',
+          fontSize: accent ? '0.69rem' : '0.67rem',
+          letterSpacing: '0.13em',
+          fontWeight: 800,
+          textTransform: 'uppercase',
+        }}>{title}</h3>
+        <span style={{ flex: 1, height: 1, background: accent ? 'rgba(48,20,5,0.28)' : 'rgba(201,168,76,0.18)' }} />
+        <SmallReroll onClick={onReroll} />
+      </div>
+      <div className="font-crimson" style={accent ? { color: '#211006', fontSize: 'clamp(0.78rem,1.34vw,0.92rem)', lineHeight: 1.34, fontWeight: 600 } : cleanTextStyle}>
+        {children}
+      </div>
+    </section>
+  )
+}
+
+function DesktopRedesign({ character, imageUrl, isGenerating, isLoadingImage, imageStartedAt, quality, onImageLoad, onZoom, onRerollName, onRerollField, lang }: Props & { lang: Lang }) {
+  const portraitProps = { character, imageUrl, isLoadingImage, imageStartedAt, quality, onImageLoad, onZoom }
+
+  if (isGenerating || !character) {
+    return (
+      <div className="hidden md:grid" style={{ aspectRatio: '4 / 5', placeItems: 'center', background: '#0a0806', boxShadow: SHADOW, border: '1px solid rgba(201,168,76,0.24)' }}>
+        <div className="font-cinzel text-xs tracking-widest animate-pulse" style={{ color: 'rgba(201,168,76,0.48)' }}>{isGenerating ? t(lang, 'consulting') : t(lang, 'generatePrompt')}</div>
+      </div>
+    )
+  }
+
+  const c = character.combatStats
+  const abilities = character.abilityScores
+  const abilityRows: Array<[string, keyof typeof abilities]> = [['STR','strength'],['DEX','dexterity'],['CON','constitution'],['INT','intelligence'],['WIS','wisdom'],['CHA','charisma']]
+
+  return (
+    <div className="hidden md:grid" style={{
+      position: 'relative',
+      aspectRatio: '4 / 5',
+      gridTemplateRows: 'auto 1fr auto',
+      gap: 10,
+      padding: 18,
+      overflow: 'hidden',
+      background: [
+        'radial-gradient(ellipse at 20% 0%, rgba(87,45,11,0.35), transparent 46%)',
+        'linear-gradient(145deg, #22170b 0%, #120c06 52%, #080604 100%)',
+      ].join(','),
+      boxShadow: SHADOW,
+      border: '1px solid rgba(201,168,76,0.27)',
+    }}>
+      <div style={{ position: 'absolute', inset: 0, backgroundImage: GLOBAL_GRAIN, opacity: 0.19, pointerEvents: 'none' }} />
+
+      <header style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: '1fr auto', gap: 12, alignItems: 'start', borderBottom: '1px solid rgba(201,168,76,0.22)', paddingBottom: 10 }}>
+        <div>
+          <h1 className="font-cinzel-decorative uppercase" style={{ margin: 0, color: '#f0dfb4', fontSize: 'clamp(1.55rem, 3.7vw, 2.25rem)', lineHeight: 0.96, letterSpacing: '0.035em', textShadow: '0 2px 16px rgba(0,0,0,0.85)' }}>{character.name}</h1>
+          <p className="font-cinzel" style={{ margin: '7px 0 0', color: '#caa85a', fontSize: 'clamp(0.72rem,1.25vw,0.86rem)', letterSpacing: '0.11em' }}>{tr(character, lang, 'species')} · {tr(character, lang, 'characterClass')} · {t(lang, 'level')} {character.level}</p>
+        </div>
+        <SmallReroll onClick={onRerollName} title="Rul navn om" />
+      </header>
+
+      <main style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: '31% 1fr', gap: 12, minHeight: 0 }}>
+        <aside style={{ display: 'grid', gridTemplateRows: 'auto auto 1fr', gap: 10, minHeight: 0 }}>
+          <div style={{ border: '1px solid rgba(201,168,76,0.28)', background: '#050403', padding: 7, boxShadow: 'inset 0 0 25px rgba(0,0,0,0.65)' }}>
+            <div style={{ position: 'relative', aspectRatio: '3 / 4', overflow: 'hidden', background: '#080604' }}>
+              <PortraitPanel key={imageUrl ?? 'empty'} {...portraitProps} />
+            </div>
+          </div>
+          <InfoCard title={t(lang, 'appearance')} onReroll={() => onRerollField('appearance')}>
+            <span style={{ fontSize: 'clamp(0.78rem,1.25vw,0.9rem)', lineHeight: 1.35 }}>{trAppearance(character, lang)}</span>
+          </InfoCard>
+          <InfoCard title={t(lang, 'combatData')} accent>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 6, marginBottom: 7 }}>
+              <strong>AC {c.armorClass}</strong><strong>HP {c.hitPoints}</strong><strong>Init {c.initiative}</strong>
+              <span>Speed {c.speed}</span><span>PP {c.passivePerception}</span><span>CR {c.challenge}</span>
+            </div>
+            <div style={{ fontSize: '0.78rem', lineHeight: 1.28 }}><b>Melee:</b> {c.melee.name} {c.melee.toHit} · {c.melee.damage}</div>
+            <div style={{ fontSize: '0.78rem', lineHeight: 1.28 }}><b>Range:</b> {c.ranged.name} {c.ranged.toHit} · {c.ranged.damage}</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gap: 3, marginTop: 8 }}>
+              {abilityRows.map(([abbr, key]) => <div key={abbr} style={{ textAlign: 'center', border: '1px solid rgba(44,20,5,0.30)', padding: '2px 1px' }}><div style={{ fontSize: '0.48rem', letterSpacing: '0.05em' }}>{abbr}</div><b>{abilities[key]}</b></div>)}
+            </div>
+          </InfoCard>
+        </aside>
+
+        <section style={{ display: 'grid', gridTemplateRows: 'auto auto 1fr auto', gap: 10, minHeight: 0 }}>
+          <InfoCard title={t(lang, 'firstImpression')}>
+            <em>{tr(character, lang, 'firstImpression')}</em>
+          </InfoCard>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 7 }}>
+            <InfoCard title={t(lang, 'race')}><b>{tr(character, lang, 'species')}</b></InfoCard>
+            <InfoCard title={t(lang, 'class')}><b>{tr(character, lang, 'characterClass')}</b></InfoCard>
+            <InfoCard title={t(lang, 'alignment')}><b>{tr(character, lang, 'alignment')}</b></InfoCard>
+            <InfoCard title={t(lang, 'level')}><b>{character.level}</b></InfoCard>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, minHeight: 0 }}>
+            <div style={{ display: 'grid', gap: 8, alignContent: 'start' }}>
+              <InfoCard title={t(lang, 'personalityTrait')} onReroll={() => onRerollField('personalityTrait')}>{tr(character, lang, 'personalityTrait')}</InfoCard>
+              <InfoCard title={t(lang, 'ideal')} onReroll={() => onRerollField('ideal')}>{tr(character, lang, 'ideal')}</InfoCard>
+              <InfoCard title={t(lang, 'bond')} onReroll={() => onRerollField('bond')}>{tr(character, lang, 'bond')}</InfoCard>
+              <InfoCard title={t(lang, 'flaw')} onReroll={() => onRerollField('flaw')}>{tr(character, lang, 'flaw')}</InfoCard>
+            </div>
+            <div style={{ display: 'grid', gap: 8, alignContent: 'start' }}>
+              <InfoCard title={t(lang, 'motivation')} onReroll={() => onRerollField('motivation')}>{tr(character, lang, 'motivation')}</InfoCard>
+              <InfoCard title={t(lang, 'secret')} onReroll={() => onRerollField('secret')}>{tr(character, lang, 'secret')}</InfoCard>
+              <InfoCard title={t(lang, 'mannerism')} onReroll={() => onRerollField('mannerism')}>{tr(character, lang, 'mannerism')}</InfoCard>
+              <InfoCard title={t(lang, 'relation')} onReroll={() => onRerollField('relationship')}>{tr(character, lang, 'relationship')}</InfoCard>
+            </div>
+          </div>
+          <InfoCard title={t(lang, 'sceneHook')} onReroll={() => onRerollField('sceneHook')}>
+            <strong style={{ color: '#f3dfae' }}>{tr(character, lang, 'sceneHook')}</strong>
+          </InfoCard>
+        </section>
+      </main>
+
+      <footer className="font-cinzel" style={{ position: 'relative', zIndex: 1, borderTop: '1px solid rgba(201,168,76,0.18)', paddingTop: 8, color: 'rgba(201,168,76,0.48)', letterSpacing: '0.16em', fontSize: '0.56rem', textAlign: 'center' }}>
+        ASAHEIMS RPG FANTASY GENERATOR
+      </footer>
+    </div>
+  )
+}
+
 interface Props {
   character: Character | null
   imageUrl: string | null
@@ -214,69 +365,7 @@ const CharacterCard = forwardRef<HTMLDivElement, Props>(function CharacterCard(
         <CardBorder zIndex={30} />
       </div>
 
-      {/* ── DESKTOP layout (≥ md) ────────────────────────────────────────── */}
-      {/* 70% text sheet / 30% portrait — wider text panel for readability */}
-      <div
-        className="hidden md:flex"
-        style={{
-          position: 'relative',
-          aspectRatio: '4 / 5',
-          overflow: 'hidden',
-          background: '#0a0806',
-          boxShadow: SHADOW,
-        }}
-      >
-        {/* Left text sheet — 60% width */}
-        <div style={{
-          width: '70%',
-          flexShrink: 0,
-          height: '100%',
-          zIndex: 10,
-          position: 'relative',
-          boxShadow: '4px 0 18px rgba(0,0,0,0.6)',
-        }}>
-          <CharacterSheet character={character} isGenerating={isGenerating} onRerollName={onRerollName} onRerollField={onRerollField} lang={lang} />
-        </div>
-
-        {/* Thin divider line */}
-        <div aria-hidden style={{
-          position: 'absolute', top: 0, bottom: 0, left: '70%',
-          width: 1, background: 'rgba(201,168,76,0.14)', zIndex: 12, pointerEvents: 'none',
-        }} />
-
-        {/* Right portrait panel — 40% width, framed with padding */}
-        <div style={{
-          flex: 1,
-          height: '100%',
-          position: 'relative',
-          background: 'radial-gradient(ellipse at 50% 35%, rgba(18,10,3,1) 0%, rgba(6,4,2,1) 100%)',
-          display: 'flex',
-          flexDirection: 'column',
-        }}>
-          {/* Portrait with inner padding — not full-bleed */}
-          <div style={{ flex: 1, padding: '28px 20px 10px', position: 'relative', minHeight: 0 }}>
-            <div style={{
-              position: 'relative',
-              height: '100%',
-              border: '1px solid rgba(201,168,76,0.18)',
-              overflow: 'hidden',
-            }}>
-              <PortraitPanel key={imageUrl ?? 'empty'} {...portraitProps} />
-            </div>
-          </div>
-
-          {/* Appearance caption below portrait */}
-          {character && !isGenerating && (
-            <div style={{ padding: '10px 20px 18px', flexShrink: 0 }}>
-              <AppearanceLine text={trAppearance(character, lang)} lang={lang} />
-            </div>
-          )}
-        </div>
-
-        <CardBorder zIndex={20} />
-        <GrainOverlay zIndex={22} />
-        <VignetteOverlay zIndex={23} />
-      </div>
+      <DesktopRedesign character={character} imageUrl={imageUrl} isGenerating={isGenerating} isLoadingImage={isLoadingImage} imageStartedAt={imageStartedAt} quality={quality} onImageLoad={onImageLoad} onZoom={onZoom} onRerollName={onRerollName} onRerollField={onRerollField} lang={lang} />
 
     </motion.div>
   )
