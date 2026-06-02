@@ -391,11 +391,16 @@ export default function CharacterGenerator() {
   useEffect(() => { langRef.current = lang }, [lang])
 
   const autoPortraitFired = useRef(false)
+  const triggerImageRef = useRef(triggerImage)
+  useEffect(() => { triggerImageRef.current = triggerImage }, [triggerImage])
   useEffect(() => {
     if (!character || autoPortraitFired.current) return
     autoPortraitFired.current = true
-    triggerImage(character, quality, true)
-  }, [character, quality, triggerImage])
+    // Small delay to ensure all state (quality, imageStyle etc.) has settled
+    const id = setTimeout(() => triggerImageRef.current(character, quality, true), 50)
+    return () => clearTimeout(id)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [character])
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {

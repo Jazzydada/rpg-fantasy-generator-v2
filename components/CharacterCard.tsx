@@ -221,7 +221,7 @@ function DesktopRedesign({ character, imageUrl, isGenerating, isLoadingImage, im
               {([
                 { label: 'AC',   value: c.armorClass,       color: '#4a7fa5', bg: 'rgba(30,60,90,0.28)' },
                 { label: 'HP',   value: c.hitPoints,        color: '#a05050', bg: 'rgba(90,25,25,0.28)' },
-                { label: 'Init', value: (Number(c.initiative) >= 0 ? '+' : '') + c.initiative, color: '#e8d5a0', bg: 'rgba(60,45,10,0.55)' },
+                { label: 'Init', value: (() => { const n = parseInt(String(c.initiative).replace(/[^-\d]/g,'')); return (n >= 0 ? '+' : '') + n })(), color: '#e8d5a0', bg: 'rgba(60,45,10,0.55)' },
               ] as const).map(({ label, value, color, bg }) => (
                 <div key={label} style={{ textAlign: 'center', borderRadius: 4, border: `1px solid ${color}55`, background: bg, padding: '4px 2px' }}>
                   <div style={{ fontSize: '0.46rem', letterSpacing: '0.1em', color, textTransform: 'uppercase', fontWeight: 700 }}>{label}</div>
@@ -283,8 +283,8 @@ function DesktopRedesign({ character, imageUrl, isGenerating, isLoadingImage, im
             <InfoCard title={t(lang, 'alignment')}><b>{tr(character, lang, 'alignment')}</b></InfoCard>
             <InfoCard title={t(lang, 'level')}><b>{character.level}</b></InfoCard>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 3px 1fr', gap: '0 8px', minHeight: 0 }}>
-            <div style={{ display: 'grid', gap: 8, alignContent: 'start' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 3px 1fr', gap: '0 8px', minHeight: 0, overflow: 'hidden' }}>
+            <div style={{ display: 'grid', gridTemplateRows: 'repeat(4,1fr)', gap: 8, minHeight: 0 }}>
               <InfoCard title={t(lang, 'personalityTrait')} onReroll={() => onRerollField('personalityTrait')}>{tr(character, lang, 'personalityTrait')}</InfoCard>
               <InfoCard title={t(lang, 'ideal')} onReroll={() => onRerollField('ideal')}>{tr(character, lang, 'ideal')}</InfoCard>
               <InfoCard title={t(lang, 'bond')} onReroll={() => onRerollField('bond')}>{tr(character, lang, 'bond')}</InfoCard>
@@ -292,7 +292,7 @@ function DesktopRedesign({ character, imageUrl, isGenerating, isLoadingImage, im
             </div>
             {/* vertical divider */}
             <div style={{ background: 'linear-gradient(to bottom, transparent, rgba(80,110,160,0.35) 20%, rgba(80,110,160,0.35) 80%, transparent)', borderRadius: 2 }} />
-            <div style={{ display: 'grid', gap: 8, alignContent: 'start' }}>
+            <div style={{ display: 'grid', gridTemplateRows: 'repeat(4,1fr)', gap: 8, minHeight: 0 }}>
               <InfoCard variant="right" title={t(lang, 'motivation')} onReroll={() => onRerollField('motivation')}>{tr(character, lang, 'motivation')}</InfoCard>
               <InfoCard variant="right" title={t(lang, 'secret')} onReroll={() => onRerollField('secret')}>{tr(character, lang, 'secret')}</InfoCard>
               <InfoCard variant="right" title={t(lang, 'mannerism')} onReroll={() => onRerollField('mannerism')}>{tr(character, lang, 'mannerism')}</InfoCard>

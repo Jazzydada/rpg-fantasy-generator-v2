@@ -10,6 +10,9 @@ const LABELS: Record<string, Record<Lang, string>> = {
   // CharacterSheet — CombatBox
   combatData:         { da: 'KAMPDATA',            en: 'COMBAT DATA' },
 
+  // CharacterSheet — first impression
+  firstImpression:    { da: 'FØRSTE INDTRYK',     en: 'FIRST IMPRESSION' },
+
   // CharacterSheet — Trait labels
   personalityTrait:   { da: 'PERSONLIGHEDSTRÆK',  en: 'PERSONALITY TRAIT' },
   ideal:              { da: 'IDEAL',               en: 'IDEAL' },
