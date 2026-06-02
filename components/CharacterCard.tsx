@@ -12,7 +12,8 @@ import { translateAppearanceToEn } from '@/lib/generator'
 
 // Translation helper (mirrors CharacterSheet's tr)
 function tr(char: Character, lang: Lang, field: keyof NonNullable<Character['translations']>['da']): string {
-  return char.translations?.[lang]?.[field] ?? (char[field as keyof Character] as string) ?? ''
+  const raw = char.translations?.[lang]?.[field] ?? (char[field as keyof Character] as string) ?? ''
+  return raw.charAt(0).toUpperCase() + raw.slice(1)
 }
 
 // START INSTANT LANGUAGE SWITCH — appearance
@@ -198,14 +199,59 @@ function DesktopRedesign({ character, imageUrl, isGenerating, isLoadingImage, im
             <span style={{ fontSize: 'clamp(0.78rem,1.25vw,0.9rem)', lineHeight: 1.35 }}>{trAppearance(character, lang)}</span>
           </InfoCard>
           <InfoCard title={t(lang, 'combatData')} accent>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 6, marginBottom: 7 }}>
-              <strong>AC {c.armorClass}</strong><strong>HP {c.hitPoints}</strong><strong>Init {c.initiative}</strong>
-              <span>Speed {c.speed}</span><span>PP {c.passivePerception}</span><span>CR {c.challenge}</span>
+            {/* Top stats: AC · HP · Init */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 5, marginBottom: 6 }}>
+              {([
+                { label: 'AC',   value: c.armorClass,       color: '#4a7fa5', bg: 'rgba(30,60,90,0.28)' },
+                { label: 'HP',   value: c.hitPoints,        color: '#a05050', bg: 'rgba(90,25,25,0.28)' },
+                { label: 'Init', value: (Number(c.initiative) >= 0 ? '+' : '') + c.initiative, color: '#b8963a', bg: 'rgba(80,55,10,0.28)' },
+              ] as const).map(({ label, value, color, bg }) => (
+                <div key={label} style={{ textAlign: 'center', borderRadius: 4, border: `1px solid ${color}55`, background: bg, padding: '4px 2px' }}>
+                  <div style={{ fontSize: '0.46rem', letterSpacing: '0.1em', color, textTransform: 'uppercase', fontWeight: 700 }}>{label}</div>
+                  <div style={{ fontSize: '0.9rem', fontWeight: 800, color, lineHeight: 1.1 }}>{value}</div>
+                </div>
+              ))}
             </div>
-            <div style={{ fontSize: '0.78rem', lineHeight: 1.28 }}><b>Melee:</b> {c.melee.name} {c.melee.toHit} · {c.melee.damage}</div>
-            <div style={{ fontSize: '0.78rem', lineHeight: 1.28 }}><b>Range:</b> {c.ranged.name} {c.ranged.toHit} · {c.ranged.damage}</div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gap: 3, marginTop: 8 }}>
-              {abilityRows.map(([abbr, key]) => <div key={abbr} style={{ textAlign: 'center', border: '1px solid rgba(44,20,5,0.30)', padding: '2px 1px' }}><div style={{ fontSize: '0.48rem', letterSpacing: '0.05em' }}>{abbr}</div><b>{abilities[key]}</b></div>)}
+            {/* Secondary stats: Speed · PP · CR */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 5, marginBottom: 8 }}>
+              {([
+                { label: 'Speed', value: c.speed },
+                { label: 'PP',    value: c.passivePerception },
+                { label: 'CR',    value: c.challenge },
+              ] as const).map(({ label, value }) => (
+                <div key={label} style={{ textAlign: 'center', borderRadius: 3, border: '1px solid rgba(44,20,5,0.40)', background: 'rgba(0,0,0,0.18)', padding: '3px 2px' }}>
+                  <div style={{ fontSize: '0.44rem', letterSpacing: '0.09em', color: 'rgba(48,20,5,0.75)', textTransform: 'uppercase', fontWeight: 700 }}>{label}</div>
+                  <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#2a1304', lineHeight: 1.1 }}>{value}</div>
+                </div>
+              ))}
+            </div>
+            {/* Ability scores with modifier */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gap: 3, marginBottom: 8 }}>
+              {abilityRows.map(([abbr, key]) => {
+                const score = abilities[key]
+                const mod = Math.floor((score - 10) / 2)
+                const modStr = (mod >= 0 ? '+' : '') + mod
+                return (
+                  <div key={abbr} style={{ textAlign: 'center', borderRadius: 3, border: '1px solid rgba(44,20,5,0.35)', background: 'rgba(0,0,0,0.15)', padding: '3px 1px' }}>
+                    <div style={{ fontSize: '0.44rem', letterSpacing: '0.06em', color: 'rgba(48,20,5,0.70)', textTransform: 'uppercase', fontWeight: 700 }}>{abbr}</div>
+                    <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#2a1304', lineHeight: 1 }}>{score}</div>
+                    <div style={{ fontSize: '0.48rem', color: mod >= 0 ? '#2a5c2a' : '#7a2020', fontWeight: 700 }}>{modStr}</div>
+                  </div>
+                )
+              })}
+            </div>
+            {/* Weapons at bottom */}
+            <div style={{ borderTop: '1px solid rgba(44,20,5,0.30)', paddingTop: 7, display: 'flex', flexDirection: 'column', gap: 4 }}>
+              {[
+                { label: '⚔ Melee', name: c.melee.name, toHit: c.melee.toHit, damage: c.melee.damage },
+                { label: '🏹 Range', name: c.ranged.name, toHit: c.ranged.toHit, damage: c.ranged.damage },
+              ].map(({ label, name, toHit, damage }) => (
+                <div key={label} style={{ display: 'flex', alignItems: 'baseline', gap: 5, fontSize: '0.74rem', lineHeight: 1.3 }}>
+                  <span style={{ fontWeight: 700, color: '#2a1304', whiteSpace: 'nowrap' }}>{label}</span>
+                  <span style={{ color: '#3a1f08' }}>{name}</span>
+                  <span style={{ marginLeft: 'auto', whiteSpace: 'nowrap', color: '#2a1304', fontWeight: 700 }}>{toHit} · {damage}</span>
+                </div>
+              ))}
             </div>
           </InfoCard>
         </aside>
