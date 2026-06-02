@@ -117,48 +117,41 @@ function SmallReroll({ onClick, title = 'Reroll' }: { onClick?: () => void; titl
   )
 }
 
-// variant: 'left' = warm dark (default), 'right' = cool dark slate, 'accent' = golden
-function InfoCard({ title, children, onReroll, accent = false, variant = 'left' }: { title: string; children: React.ReactNode; onReroll?: () => void; accent?: boolean; variant?: 'left' | 'right' }) {
-  const bg = accent
-    ? 'linear-gradient(145deg, #d9bd84 0%, #b98745 100%)'
-    : variant === 'right'
-      ? 'linear-gradient(145deg, rgba(18,22,32,0.92), rgba(10,14,22,0.92))'
-      : 'linear-gradient(145deg, rgba(31,20,10,0.88), rgba(12,8,4,0.88))'
-  const borderColor = accent
-    ? '1px solid rgba(63,38,12,0.65)'
-    : variant === 'right'
-      ? '1px solid rgba(80,110,160,0.22)'
-      : '1px solid rgba(201,168,76,0.25)'
-  const titleColor = accent ? '#2a1304' : variant === 'right' ? '#8aaed4' : '#d8b867'
-  const dividerColor = accent ? 'rgba(48,20,5,0.28)' : variant === 'right' ? 'rgba(80,110,160,0.20)' : 'rgba(201,168,76,0.18)'
-  const textStyle: React.CSSProperties = accent
-    ? { color: '#211006', fontSize: 'clamp(0.78rem,1.34vw,0.92rem)', lineHeight: 1.34, fontWeight: 600 }
-    : variant === 'right'
-      ? { ...cleanTextStyle, color: '#ccd8ee' }
-      : cleanTextStyle
+// ─── Colour palette ──────────────────────────────────────────────────────────
+// accent   = golden parchment (Combat Data sidebar)
+// left     = ember — warm copper-brown  (Trait column: Personlighedstræk/Ideal/Bånd/Fejl + SceneHook)
+// right    = ink   — cool indigo-slate  (NPC column: Motivation/Hemmelighed/Særkende/Relation)
+// impression = topaz — deep teal-amber  (Første Indtryk — stands alone)
+const CARD_THEMES = {
+  accent:     { bg: 'linear-gradient(145deg,#d9bd84,#b98745)',                               border: 'rgba(63,38,12,0.65)',    title: '#2a1304', divider: 'rgba(48,20,5,0.28)',      text: { color: '#211006', fontSize: 'clamp(0.78rem,1.34vw,0.92rem)', lineHeight: 1.34, fontWeight: 600 } as React.CSSProperties },
+  left:       { bg: 'linear-gradient(145deg,rgba(36,18,6,0.93),rgba(14,8,3,0.93))',          border: 'rgba(180,110,40,0.30)',  title: '#c8924a', divider: 'rgba(180,110,40,0.18)',   text: { color: '#e8d4b0', fontSize: 'clamp(0.86rem,1.55vw,1.02rem)', lineHeight: 1.42 } as React.CSSProperties },
+  right:      { bg: 'linear-gradient(145deg,rgba(14,18,30,0.95),rgba(8,11,20,0.95))',        border: 'rgba(70,100,160,0.28)',  title: '#7aa8d8', divider: 'rgba(70,100,160,0.18)',   text: { color: '#c8d8ee', fontSize: 'clamp(0.86rem,1.55vw,1.02rem)', lineHeight: 1.42 } as React.CSSProperties },
+  impression: { bg: 'linear-gradient(145deg,rgba(8,26,24,0.97),rgba(4,14,12,0.97))',         border: 'rgba(60,140,120,0.32)',  title: '#5ec4aa', divider: 'rgba(60,140,120,0.18)',   text: { color: '#c2e8e0', fontStyle: 'italic', fontSize: 'clamp(0.92rem,1.62vw,1.08rem)', lineHeight: 1.45 } as React.CSSProperties },
+}
 
+type CardVariant = 'left' | 'right' | 'accent' | 'impression'
+
+function InfoCard({ title, children, onReroll, variant = 'left' }: { title: string; children: React.ReactNode; onReroll?: () => void; variant?: CardVariant }) {
+  const theme = CARD_THEMES[variant]
   return (
     <section style={{
       position: 'relative',
-      padding: accent ? '12px 13px' : '10px 12px',
-      border: borderColor,
-      background: bg,
+      padding: variant === 'accent' ? '12px 13px' : '10px 12px',
+      border: `1px solid ${theme.border}`,
+      background: theme.bg,
       boxShadow: 'inset 0 0 18px rgba(0,0,0,0.38), 0 3px 12px rgba(0,0,0,0.24)',
-      minWidth: 0,
+      minWidth: 0, overflow: 'hidden',
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
         <h3 className="font-cinzel" style={{
-          margin: 0,
-          color: titleColor,
-          fontSize: accent ? '0.69rem' : '0.67rem',
-          letterSpacing: '0.13em',
-          fontWeight: 800,
-          textTransform: 'uppercase',
+          margin: 0, color: theme.title,
+          fontSize: variant === 'accent' ? '0.69rem' : '0.67rem',
+          letterSpacing: '0.13em', fontWeight: 800, textTransform: 'uppercase',
         }}>{title}</h3>
-        <span style={{ flex: 1, height: 1, background: dividerColor }} />
+        <span style={{ flex: 1, height: 1, background: theme.divider }} />
         <SmallReroll onClick={onReroll} />
       </div>
-      <div className="font-crimson" style={textStyle}>
+      <div className="font-crimson" style={theme.text}>
         {children}
       </div>
     </section>
@@ -215,7 +208,7 @@ function DesktopRedesign({ character, imageUrl, isGenerating, isLoadingImage, im
           <InfoCard title={t(lang, 'appearance')} onReroll={() => onRerollField('appearance')}>
             <span style={{ fontSize: 'clamp(0.78rem,1.25vw,0.9rem)', lineHeight: 1.35 }}>{trAppearance(character, lang)}</span>
           </InfoCard>
-          <InfoCard title={t(lang, 'combatData')} accent>
+          <InfoCard title={t(lang, 'combatData')} variant="accent">
             {/* Top stats: AC · HP · Init */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 5, marginBottom: 6 }}>
               {([
@@ -257,16 +250,16 @@ function DesktopRedesign({ character, imageUrl, isGenerating, isLoadingImage, im
                 )
               })}
             </div>
-            {/* Weapons at bottom */}
-            <div style={{ borderTop: '1px solid rgba(44,20,5,0.30)', paddingTop: 7, display: 'flex', flexDirection: 'column', gap: 5 }}>
+            {/* Weapons at bottom — name first, stats below */}
+            <div style={{ borderTop: '1px solid rgba(44,20,5,0.30)', paddingTop: 7, display: 'flex', flexDirection: 'column', gap: 6 }}>
               {[
                 { label: '⚔', kind: 'Melee', name: c.melee.name, toHit: c.melee.toHit, damage: c.melee.damage },
                 { label: '🏹', kind: 'Range', name: c.ranged.name, toHit: c.ranged.toHit, damage: c.ranged.damage },
               ].map(({ label, kind, name, toHit, damage }) => (
-                <div key={kind} style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '2px 6px', fontSize: '0.72rem', lineHeight: 1.25 }}>
-                  <span style={{ gridRow: '1 / 3', alignSelf: 'center', fontSize: '1rem' }}>{label}</span>
-                  <span style={{ fontWeight: 700, color: '#2a1304', textTransform: 'uppercase', fontSize: '0.55rem', letterSpacing: '0.08em' }}>{kind} · {toHit} · {damage}</span>
-                  <span style={{ color: '#3a1f08', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{name}</span>
+                <div key={kind} style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '1px 7px' }}>
+                  <span style={{ gridRow: '1 / 3', alignSelf: 'center', fontSize: '1.05rem', lineHeight: 1 }}>{label}</span>
+                  <span style={{ fontWeight: 700, color: '#2a1304', fontSize: '0.78rem', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</span>
+                  <span style={{ fontWeight: 600, color: 'rgba(42,19,4,0.72)', textTransform: 'uppercase', fontSize: '0.52rem', letterSpacing: '0.07em', lineHeight: 1.2 }}>{kind} · {toHit} · {damage}</span>
                 </div>
               ))}
             </div>
@@ -274,8 +267,8 @@ function DesktopRedesign({ character, imageUrl, isGenerating, isLoadingImage, im
         </aside>
 
         <section style={{ display: 'grid', gridTemplateRows: 'auto auto 1fr auto', gap: 10, minHeight: 0 }}>
-          <InfoCard title={t(lang, 'firstImpression')}>
-            <em>{tr(character, lang, 'firstImpression')}</em>
+          <InfoCard title={t(lang, 'firstImpression')} variant="impression">
+            {tr(character, lang, 'firstImpression')}
           </InfoCard>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 7 }}>
             <InfoCard title={t(lang, 'race')}><b>{tr(character, lang, 'species')}</b></InfoCard>
@@ -299,8 +292,8 @@ function DesktopRedesign({ character, imageUrl, isGenerating, isLoadingImage, im
               <InfoCard variant="right" title={t(lang, 'relation')} onReroll={() => onRerollField('relationship')}>{tr(character, lang, 'relationship')}</InfoCard>
             </div>
           </div>
-          <InfoCard title={t(lang, 'sceneHook')} onReroll={() => onRerollField('sceneHook')}>
-            <strong style={{ color: '#f3dfae' }}>{tr(character, lang, 'sceneHook')}</strong>
+          <InfoCard title={t(lang, 'sceneHook')} variant="left" onReroll={() => onRerollField('sceneHook')}>
+            <strong>{tr(character, lang, 'sceneHook')}</strong>
           </InfoCard>
         </section>
       </main>
