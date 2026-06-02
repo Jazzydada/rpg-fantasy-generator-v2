@@ -117,31 +117,48 @@ function SmallReroll({ onClick, title = 'Reroll' }: { onClick?: () => void; titl
   )
 }
 
-function InfoCard({ title, children, onReroll, accent = false }: { title: string; children: React.ReactNode; onReroll?: () => void; accent?: boolean }) {
+// variant: 'left' = warm dark (default), 'right' = cool dark slate, 'accent' = golden
+function InfoCard({ title, children, onReroll, accent = false, variant = 'left' }: { title: string; children: React.ReactNode; onReroll?: () => void; accent?: boolean; variant?: 'left' | 'right' }) {
+  const bg = accent
+    ? 'linear-gradient(145deg, #d9bd84 0%, #b98745 100%)'
+    : variant === 'right'
+      ? 'linear-gradient(145deg, rgba(18,22,32,0.92), rgba(10,14,22,0.92))'
+      : 'linear-gradient(145deg, rgba(31,20,10,0.88), rgba(12,8,4,0.88))'
+  const borderColor = accent
+    ? '1px solid rgba(63,38,12,0.65)'
+    : variant === 'right'
+      ? '1px solid rgba(80,110,160,0.22)'
+      : '1px solid rgba(201,168,76,0.25)'
+  const titleColor = accent ? '#2a1304' : variant === 'right' ? '#8aaed4' : '#d8b867'
+  const dividerColor = accent ? 'rgba(48,20,5,0.28)' : variant === 'right' ? 'rgba(80,110,160,0.20)' : 'rgba(201,168,76,0.18)'
+  const textStyle: React.CSSProperties = accent
+    ? { color: '#211006', fontSize: 'clamp(0.78rem,1.34vw,0.92rem)', lineHeight: 1.34, fontWeight: 600 }
+    : variant === 'right'
+      ? { ...cleanTextStyle, color: '#ccd8ee' }
+      : cleanTextStyle
+
   return (
     <section style={{
       position: 'relative',
       padding: accent ? '12px 13px' : '10px 12px',
-      border: accent ? '1px solid rgba(63,38,12,0.65)' : '1px solid rgba(201,168,76,0.25)',
-      background: accent
-        ? 'linear-gradient(145deg, #d9bd84 0%, #b98745 100%)'
-        : 'linear-gradient(145deg, rgba(31,20,10,0.88), rgba(12,8,4,0.88))',
+      border: borderColor,
+      background: bg,
       boxShadow: 'inset 0 0 18px rgba(0,0,0,0.38), 0 3px 12px rgba(0,0,0,0.24)',
       minWidth: 0,
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
         <h3 className="font-cinzel" style={{
           margin: 0,
-          color: accent ? '#2a1304' : '#d8b867',
+          color: titleColor,
           fontSize: accent ? '0.69rem' : '0.67rem',
           letterSpacing: '0.13em',
           fontWeight: 800,
           textTransform: 'uppercase',
         }}>{title}</h3>
-        <span style={{ flex: 1, height: 1, background: accent ? 'rgba(48,20,5,0.28)' : 'rgba(201,168,76,0.18)' }} />
+        <span style={{ flex: 1, height: 1, background: dividerColor }} />
         <SmallReroll onClick={onReroll} />
       </div>
-      <div className="font-crimson" style={accent ? { color: '#211006', fontSize: 'clamp(0.78rem,1.34vw,0.92rem)', lineHeight: 1.34, fontWeight: 600 } : cleanTextStyle}>
+      <div className="font-crimson" style={textStyle}>
         {children}
       </div>
     </section>
@@ -204,7 +221,7 @@ function DesktopRedesign({ character, imageUrl, isGenerating, isLoadingImage, im
               {([
                 { label: 'AC',   value: c.armorClass,       color: '#4a7fa5', bg: 'rgba(30,60,90,0.28)' },
                 { label: 'HP',   value: c.hitPoints,        color: '#a05050', bg: 'rgba(90,25,25,0.28)' },
-                { label: 'Init', value: (Number(c.initiative) >= 0 ? '+' : '') + c.initiative, color: '#b8963a', bg: 'rgba(80,55,10,0.28)' },
+                { label: 'Init', value: (Number(c.initiative) >= 0 ? '+' : '') + c.initiative, color: '#e8d5a0', bg: 'rgba(60,45,10,0.55)' },
               ] as const).map(({ label, value, color, bg }) => (
                 <div key={label} style={{ textAlign: 'center', borderRadius: 4, border: `1px solid ${color}55`, background: bg, padding: '4px 2px' }}>
                   <div style={{ fontSize: '0.46rem', letterSpacing: '0.1em', color, textTransform: 'uppercase', fontWeight: 700 }}>{label}</div>
@@ -241,15 +258,15 @@ function DesktopRedesign({ character, imageUrl, isGenerating, isLoadingImage, im
               })}
             </div>
             {/* Weapons at bottom */}
-            <div style={{ borderTop: '1px solid rgba(44,20,5,0.30)', paddingTop: 7, display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <div style={{ borderTop: '1px solid rgba(44,20,5,0.30)', paddingTop: 7, display: 'flex', flexDirection: 'column', gap: 5 }}>
               {[
-                { label: '⚔ Melee', name: c.melee.name, toHit: c.melee.toHit, damage: c.melee.damage },
-                { label: '🏹 Range', name: c.ranged.name, toHit: c.ranged.toHit, damage: c.ranged.damage },
-              ].map(({ label, name, toHit, damage }) => (
-                <div key={label} style={{ display: 'flex', alignItems: 'baseline', gap: 5, fontSize: '0.74rem', lineHeight: 1.3 }}>
-                  <span style={{ fontWeight: 700, color: '#2a1304', whiteSpace: 'nowrap' }}>{label}</span>
-                  <span style={{ color: '#3a1f08' }}>{name}</span>
-                  <span style={{ marginLeft: 'auto', whiteSpace: 'nowrap', color: '#2a1304', fontWeight: 700 }}>{toHit} · {damage}</span>
+                { label: '⚔', kind: 'Melee', name: c.melee.name, toHit: c.melee.toHit, damage: c.melee.damage },
+                { label: '🏹', kind: 'Range', name: c.ranged.name, toHit: c.ranged.toHit, damage: c.ranged.damage },
+              ].map(({ label, kind, name, toHit, damage }) => (
+                <div key={kind} style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '2px 6px', fontSize: '0.72rem', lineHeight: 1.25 }}>
+                  <span style={{ gridRow: '1 / 3', alignSelf: 'center', fontSize: '1rem' }}>{label}</span>
+                  <span style={{ fontWeight: 700, color: '#2a1304', textTransform: 'uppercase', fontSize: '0.55rem', letterSpacing: '0.08em' }}>{kind} · {toHit} · {damage}</span>
+                  <span style={{ color: '#3a1f08', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{name}</span>
                 </div>
               ))}
             </div>
@@ -266,18 +283,20 @@ function DesktopRedesign({ character, imageUrl, isGenerating, isLoadingImage, im
             <InfoCard title={t(lang, 'alignment')}><b>{tr(character, lang, 'alignment')}</b></InfoCard>
             <InfoCard title={t(lang, 'level')}><b>{character.level}</b></InfoCard>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, minHeight: 0 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 3px 1fr', gap: '0 8px', minHeight: 0 }}>
             <div style={{ display: 'grid', gap: 8, alignContent: 'start' }}>
               <InfoCard title={t(lang, 'personalityTrait')} onReroll={() => onRerollField('personalityTrait')}>{tr(character, lang, 'personalityTrait')}</InfoCard>
               <InfoCard title={t(lang, 'ideal')} onReroll={() => onRerollField('ideal')}>{tr(character, lang, 'ideal')}</InfoCard>
               <InfoCard title={t(lang, 'bond')} onReroll={() => onRerollField('bond')}>{tr(character, lang, 'bond')}</InfoCard>
               <InfoCard title={t(lang, 'flaw')} onReroll={() => onRerollField('flaw')}>{tr(character, lang, 'flaw')}</InfoCard>
             </div>
+            {/* vertical divider */}
+            <div style={{ background: 'linear-gradient(to bottom, transparent, rgba(80,110,160,0.35) 20%, rgba(80,110,160,0.35) 80%, transparent)', borderRadius: 2 }} />
             <div style={{ display: 'grid', gap: 8, alignContent: 'start' }}>
-              <InfoCard title={t(lang, 'motivation')} onReroll={() => onRerollField('motivation')}>{tr(character, lang, 'motivation')}</InfoCard>
-              <InfoCard title={t(lang, 'secret')} onReroll={() => onRerollField('secret')}>{tr(character, lang, 'secret')}</InfoCard>
-              <InfoCard title={t(lang, 'mannerism')} onReroll={() => onRerollField('mannerism')}>{tr(character, lang, 'mannerism')}</InfoCard>
-              <InfoCard title={t(lang, 'relation')} onReroll={() => onRerollField('relationship')}>{tr(character, lang, 'relationship')}</InfoCard>
+              <InfoCard variant="right" title={t(lang, 'motivation')} onReroll={() => onRerollField('motivation')}>{tr(character, lang, 'motivation')}</InfoCard>
+              <InfoCard variant="right" title={t(lang, 'secret')} onReroll={() => onRerollField('secret')}>{tr(character, lang, 'secret')}</InfoCard>
+              <InfoCard variant="right" title={t(lang, 'mannerism')} onReroll={() => onRerollField('mannerism')}>{tr(character, lang, 'mannerism')}</InfoCard>
+              <InfoCard variant="right" title={t(lang, 'relation')} onReroll={() => onRerollField('relationship')}>{tr(character, lang, 'relationship')}</InfoCard>
             </div>
           </div>
           <InfoCard title={t(lang, 'sceneHook')} onReroll={() => onRerollField('sceneHook')}>
