@@ -124,7 +124,7 @@ function SmallReroll({ onClick, title = 'Reroll' }: { onClick?: () => void; titl
 // impression = topaz — deep teal-amber  (Første Indtryk — stands alone)
 const CARD_THEMES = {
   accent:     { bg: 'linear-gradient(145deg,#d9bd84,#b98745)',                               border: 'rgba(63,38,12,0.65)',    title: '#2a1304', divider: 'rgba(48,20,5,0.28)',      text: { color: '#211006', fontSize: 'clamp(0.78rem,1.34vw,0.92rem)', lineHeight: 1.34, fontWeight: 600 } as React.CSSProperties },
-  left:       { bg: 'linear-gradient(145deg,rgba(70,32,4,0.45),rgba(20,9,2,0.92))',          border: 'rgba(210,130,40,0.55)',  title: '#e8a84a', divider: 'rgba(210,130,40,0.35)',   text: { color: '#f0ddb8', fontSize: 'clamp(0.86rem,1.55vw,1.02rem)', lineHeight: 1.42 } as React.CSSProperties },
+  left:       { bg: 'linear-gradient(145deg,rgba(60,8,28,0.55),rgba(18,4,10,0.94))',          border: 'rgba(190,70,110,0.52)',  title: '#d97a9e', divider: 'rgba(190,70,110,0.30)',   text: { color: '#f2d8e4', fontSize: 'clamp(0.86rem,1.55vw,1.02rem)', lineHeight: 1.42 } as React.CSSProperties },
   right:      { bg: 'linear-gradient(145deg,rgba(14,18,30,0.95),rgba(8,11,20,0.95))',        border: 'rgba(70,100,160,0.28)',  title: '#7aa8d8', divider: 'rgba(70,100,160,0.18)',   text: { color: '#c8d8ee', fontSize: 'clamp(0.86rem,1.55vw,1.02rem)', lineHeight: 1.42 } as React.CSSProperties },
   impression: { bg: 'linear-gradient(145deg,rgba(8,26,24,0.97),rgba(4,14,12,0.97))',         border: 'rgba(60,140,120,0.32)',  title: '#5ec4aa', divider: 'rgba(60,140,120,0.18)',   text: { color: '#c2e8e0', fontStyle: 'italic', fontSize: 'clamp(0.92rem,1.62vw,1.08rem)', lineHeight: 1.45 } as React.CSSProperties },
 }
@@ -140,7 +140,7 @@ function InfoCard({ title, children, onReroll, variant = 'left' }: { title: stri
       border: `1px solid ${theme.border}`,
       background: theme.bg,
       boxShadow: variant === 'left'
-        ? 'inset 0 0 22px rgba(0,0,0,0.45), inset 0 0 40px rgba(160,70,0,0.10), 0 3px 12px rgba(0,0,0,0.28)'
+        ? 'inset 0 0 22px rgba(0,0,0,0.45), inset 0 0 40px rgba(160,30,70,0.12), 0 3px 12px rgba(0,0,0,0.28)'
         : 'inset 0 0 18px rgba(0,0,0,0.38), 0 3px 12px rgba(0,0,0,0.24)',
       minWidth: 0, overflow: 'hidden',
     }}>
@@ -255,11 +255,18 @@ function DesktopRedesign({ character, imageUrl, isGenerating, isLoadingImage, im
             {/* Weapons at bottom — name first, stats below */}
             <div style={{ borderTop: '1px solid rgba(44,20,5,0.30)', paddingTop: 7, display: 'flex', flexDirection: 'column', gap: 6 }}>
               {[
-                { label: '⚔', kind: 'Melee', name: c.melee.name, toHit: c.melee.toHit, damage: c.melee.damage },
-                { label: '🏹', kind: 'Range', name: c.ranged.name, toHit: c.ranged.toHit, damage: c.ranged.damage },
+                { label: 'M', kind: 'Melee', name: c.melee.name, toHit: c.melee.toHit, damage: c.melee.damage },
+                { label: 'R', kind: 'Range', name: c.ranged.name, toHit: c.ranged.toHit, damage: c.ranged.damage },
               ].map(({ label, kind, name, toHit, damage }) => (
                 <div key={kind} style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '1px 7px' }}>
-                  <span style={{ gridRow: '1 / 3', alignSelf: 'center', fontSize: '1.05rem', lineHeight: 1 }}>{label}</span>
+                  <div style={{
+                    gridRow: '1 / 3', alignSelf: 'center',
+                    width: 18, height: 18, borderRadius: 3,
+                    background: 'rgba(42,19,4,0.30)', border: '1px solid rgba(42,19,4,0.45)',
+                    display: 'grid', placeItems: 'center', flexShrink: 0,
+                    fontSize: '0.56rem', fontWeight: 800, letterSpacing: '0.04em',
+                    color: '#3a1f08', fontFamily: 'var(--font-cinzel)',
+                  }}>{label}</div>
                   <span style={{ fontWeight: 700, color: '#2a1304', fontSize: '0.78rem', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</span>
                   <span style={{ fontWeight: 600, color: 'rgba(42,19,4,0.72)', textTransform: 'uppercase', fontSize: '0.52rem', letterSpacing: '0.07em', lineHeight: 1.2 }}>{kind} · {toHit} · {damage}</span>
                 </div>
