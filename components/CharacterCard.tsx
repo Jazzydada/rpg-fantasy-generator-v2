@@ -116,18 +116,20 @@ function SmallReroll({ onClick, title = 'Reroll' }: { onClick?: () => void; titl
 }
 
 // ─── Colour palette ──────────────────────────────────────────────────────────
-// accent   = golden parchment (Combat Data sidebar)
-// left     = ember — warm copper-brown  (Trait column: Personlighedstræk/Ideal/Bånd/Fejl + SceneHook)
-// right    = ink   — cool indigo-slate  (NPC column: Motivation/Hemmelighed/Særkende/Relation)
-// impression = topaz — deep teal-amber  (Første Indtryk — stands alone)
+// accent   = golden parchment  (Combat Data sidebar)
+// stat     = violet amethyst   (Race / Class / Alignment / Level)
+// left     = rose burgundy     (Trait column: Personlighedstræk/Ideal/Bånd/Fejl + SceneHook)
+// right    = indigo slate      (NPC column: Motivation/Hemmelighed/Særkende/Relation)
+// impression = deep teal       (Første Indtryk — stands alone)
 const CARD_THEMES = {
-  accent:     { bg: 'linear-gradient(145deg,#d9bd84,#b98745)',                               border: 'rgba(63,38,12,0.65)',    title: '#2a1304', divider: 'rgba(48,20,5,0.28)',      text: { color: '#211006', fontSize: 'clamp(0.78rem,1.34vw,0.92rem)', lineHeight: 1.34, fontWeight: 600 } as React.CSSProperties },
+  accent:     { bg: 'linear-gradient(145deg,#d9bd84,#b98745)',                                border: 'rgba(63,38,12,0.65)',    title: '#2a1304', divider: 'rgba(48,20,5,0.28)',      text: { color: '#211006', fontSize: 'clamp(0.78rem,1.34vw,0.92rem)', lineHeight: 1.34, fontWeight: 600 } as React.CSSProperties },
+  stat:       { bg: 'linear-gradient(145deg,rgba(38,14,58,0.62),rgba(14,6,22,0.95))',         border: 'rgba(150,90,210,0.48)',  title: '#b07ee0', divider: 'rgba(150,90,210,0.25)',   text: { color: '#e4d4f8', fontSize: 'clamp(0.86rem,1.55vw,1.02rem)', lineHeight: 1.42, fontWeight: 700 } as React.CSSProperties },
   left:       { bg: 'linear-gradient(145deg,rgba(60,8,28,0.55),rgba(18,4,10,0.94))',          border: 'rgba(190,70,110,0.52)',  title: '#d97a9e', divider: 'rgba(190,70,110,0.30)',   text: { color: '#f2d8e4', fontSize: 'clamp(0.86rem,1.55vw,1.02rem)', lineHeight: 1.42 } as React.CSSProperties },
-  right:      { bg: 'linear-gradient(145deg,rgba(14,18,30,0.95),rgba(8,11,20,0.95))',        border: 'rgba(70,100,160,0.28)',  title: '#7aa8d8', divider: 'rgba(70,100,160,0.18)',   text: { color: '#c8d8ee', fontSize: 'clamp(0.86rem,1.55vw,1.02rem)', lineHeight: 1.42 } as React.CSSProperties },
-  impression: { bg: 'linear-gradient(145deg,rgba(8,26,24,0.97),rgba(4,14,12,0.97))',         border: 'rgba(60,140,120,0.32)',  title: '#5ec4aa', divider: 'rgba(60,140,120,0.18)',   text: { color: '#c2e8e0', fontStyle: 'italic', fontSize: 'clamp(0.92rem,1.62vw,1.08rem)', lineHeight: 1.45 } as React.CSSProperties },
+  right:      { bg: 'linear-gradient(145deg,rgba(14,18,30,0.95),rgba(8,11,20,0.95))',         border: 'rgba(70,100,160,0.28)',  title: '#7aa8d8', divider: 'rgba(70,100,160,0.18)',   text: { color: '#c8d8ee', fontSize: 'clamp(0.86rem,1.55vw,1.02rem)', lineHeight: 1.42 } as React.CSSProperties },
+  impression: { bg: 'linear-gradient(145deg,rgba(8,26,24,0.97),rgba(4,14,12,0.97))',          border: 'rgba(60,140,120,0.32)',  title: '#5ec4aa', divider: 'rgba(60,140,120,0.18)',   text: { color: '#c2e8e0', fontStyle: 'italic', fontSize: 'clamp(0.92rem,1.62vw,1.08rem)', lineHeight: 1.45 } as React.CSSProperties },
 }
 
-type CardVariant = 'left' | 'right' | 'accent' | 'impression'
+type CardVariant = 'left' | 'right' | 'accent' | 'impression' | 'stat'
 
 function InfoCard({ title, children, onReroll, variant = 'left' }: { title: string; children: React.ReactNode; onReroll?: () => void; variant?: CardVariant }) {
   const theme = CARD_THEMES[variant]
@@ -278,10 +280,10 @@ function DesktopRedesign({ character, imageUrl, isGenerating, isLoadingImage, im
             {tr(character, lang, 'firstImpression')}
           </InfoCard>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 7 }}>
-            <InfoCard title={t(lang, 'race')}><b>{tr(character, lang, 'species')}</b></InfoCard>
-            <InfoCard title={t(lang, 'class')}><b>{tr(character, lang, 'characterClass')}</b></InfoCard>
-            <InfoCard title={t(lang, 'alignment')}><b>{tr(character, lang, 'alignment')}</b></InfoCard>
-            <InfoCard title={t(lang, 'level')}><b>{character.level}</b></InfoCard>
+            <InfoCard title={t(lang, 'race')} variant="stat"><b>{tr(character, lang, 'species')}</b></InfoCard>
+            <InfoCard title={t(lang, 'class')} variant="stat"><b>{tr(character, lang, 'characterClass')}</b></InfoCard>
+            <InfoCard title={t(lang, 'alignment')} variant="stat"><b>{tr(character, lang, 'alignment')}</b></InfoCard>
+            <InfoCard title={t(lang, 'level')} variant="stat"><b>{character.level}</b></InfoCard>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 3px 1fr', gap: '0 8px', minHeight: 0, overflow: 'hidden' }}>
             <div style={{ display: 'grid', gridTemplateRows: 'repeat(4,1fr)', gap: 8, minHeight: 0 }}>
