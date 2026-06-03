@@ -23,10 +23,8 @@ function tr(char: Character, lang: Lang, field: keyof NonNullable<Character['tra
 // re-run the lookup every render — it's just a dictionary lookup, very cheap.
 function trAppearance(char: Character, lang: Lang): string {
   const da = char.translations?.da?.appearance ?? char.appearance ?? ''
-  if (lang === 'da') return da
-  const en = translateAppearanceToEn(da)
-  // If the lookup found a translation, use it; otherwise fall back to DA
-  return en
+  const raw = lang === 'da' ? da : translateAppearanceToEn(da)
+  return raw.charAt(0).toUpperCase() + raw.slice(1)
 }
 // END INSTANT LANGUAGE SWITCH
 
