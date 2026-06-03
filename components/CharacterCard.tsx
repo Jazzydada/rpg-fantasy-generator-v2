@@ -207,7 +207,7 @@ function DesktopRedesign({ character, imageUrl, isGenerating, isLoadingImage, im
               <PortraitPanel key={imageUrl ?? 'empty'} {...portraitProps} />
             </div>
           </div>
-          <InfoCard title={t(lang, 'appearance')} onReroll={() => onRerollField('appearance')}>
+          <InfoCard title={t(lang, 'appearance')} variant="stat" onReroll={() => onRerollField('appearance')}>
             <span style={{ fontSize: 'clamp(0.78rem,1.25vw,0.9rem)', lineHeight: 1.35 }}>{trAppearance(character, lang)}</span>
           </InfoCard>
           <InfoCard title={t(lang, 'combatData')} variant="accent">
