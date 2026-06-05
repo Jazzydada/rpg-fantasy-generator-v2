@@ -115,42 +115,37 @@ function SmallReroll({ onClick, title = 'Reroll' }: { onClick?: () => void; titl
   )
 }
 
-// ─── Colour palette ──────────────────────────────────────────────────────────
-// Each GM-facing category has its own identity. Colours are restrained and
-// readable — saturated enough to distinguish at a glance, dark enough to fit
-// the fantasy aesthetic.
+// ─── Colour palette — grouped by GM information type ─────────────────────────
+// Group colours match reference image: each logical group shares one colour.
 const T = (bg: string, border: string, title: string, divider: string, text: React.CSSProperties) =>
   ({ bg, border, title, divider, text })
 
 const CARD_THEMES = {
-  // UI / structural
-  accent:      T('linear-gradient(145deg,#d9bd84,#b98745)',                             'rgba(63,38,12,0.65)',   '#2a1304', 'rgba(48,20,5,0.28)',    { color: '#211006', fontSize: 'clamp(0.78rem,1.34vw,0.92rem)', lineHeight: 1.34, fontWeight: 600 } as React.CSSProperties),
-  stat:        T('linear-gradient(145deg,rgba(34,12,56,0.70),rgba(12,4,20,0.96))',      'rgba(140,80,210,0.45)', '#a870e0', 'rgba(140,80,210,0.22)', { color: '#e0d0f8', fontSize: 'clamp(0.72rem,1.1vw,0.88rem)', lineHeight: 1.3, fontWeight: 700, wordBreak: 'break-word' } as React.CSSProperties),
+  // ── Structural ──────────────────────────────────────────────────────────────
+  accent:     T('linear-gradient(160deg,#d4ba7c 0%,#b98540 55%,#a87835 100%)',      'rgba(60,35,8,0.70)',    '#251002', 'rgba(45,18,4,0.30)',    { color: '#1e0e04', fontSize: 'clamp(0.76rem,1.32vw,0.9rem)', lineHeight: 1.35, fontWeight: 600 } as React.CSSProperties),
 
-  // Standalone top fields
-  impression:  T('linear-gradient(145deg,rgba(4,28,30,0.97),rgba(2,14,16,0.97))',       'rgba(30,180,190,0.45)', '#30d8e0', 'rgba(30,180,190,0.20)', { color: '#b8f0f4', fontStyle: 'italic', fontSize: 'clamp(0.9rem,1.58vw,1.05rem)', lineHeight: 1.46 } as React.CSSProperties),
-  appearance:  T('linear-gradient(145deg,rgba(4,22,6,0.97),rgba(2,12,3,0.97))',         'rgba(40,170,60,0.48)',  '#46d460', 'rgba(40,170,60,0.20)',  { color: '#c0f0c8', fontSize: 'clamp(0.78rem,1.22vw,0.9rem)', lineHeight: 1.36 } as React.CSSProperties),
+  // ── Group: Race / Class / Alignment / Level  →  Blue-Cyan ──────────────────
+  stat:       T('linear-gradient(160deg,rgba(3,18,30,0.97) 0%,rgba(2,10,18,0.97) 100%)', 'rgba(28,148,175,0.48)', '#22b8d0', 'rgba(28,148,175,0.20)', { color: '#aae4f0', fontSize: 'clamp(0.72rem,1.08vw,0.86rem)', lineHeight: 1.3, fontWeight: 700, wordBreak: 'break-word' } as React.CSSProperties),
 
-  // Personality group (left column)
-  personality: T('linear-gradient(145deg,rgba(30,8,52,0.68),rgba(12,3,22,0.97))',       'rgba(130,55,215,0.52)', '#a868e8', 'rgba(130,55,215,0.24)', { color: '#ddd0f8', fontSize: 'clamp(0.86rem,1.52vw,1.0rem)', lineHeight: 1.44 } as React.CSSProperties),
-  ideal:       T('linear-gradient(145deg,rgba(30,8,52,0.68),rgba(12,3,22,0.97))',       'rgba(130,55,215,0.52)', '#a868e8', 'rgba(130,55,215,0.24)', { color: '#ddd0f8', fontSize: 'clamp(0.86rem,1.52vw,1.0rem)', lineHeight: 1.44 } as React.CSSProperties),
-  bond:        T('linear-gradient(145deg,rgba(18,8,48,0.70),rgba(8,3,26,0.97))',        'rgba(100,80,210,0.50)', '#8878d8', 'rgba(100,80,210,0.22)', { color: '#d4d0f8', fontSize: 'clamp(0.86rem,1.52vw,1.0rem)', lineHeight: 1.44 } as React.CSSProperties),
-  flaw:        T('linear-gradient(145deg,rgba(44,4,8,0.72),rgba(20,2,4,0.97))',         'rgba(200,40,55,0.52)',  '#d84050', 'rgba(200,40,55,0.24)',  { color: '#f8c8cc', fontSize: 'clamp(0.86rem,1.52vw,1.0rem)', lineHeight: 1.44 } as React.CSSProperties),
+  // ── Group: First Impression  →  Teal / Cyan ────────────────────────────────
+  impression: T('linear-gradient(160deg,rgba(3,25,28,0.97) 0%,rgba(2,14,16,0.97) 100%)', 'rgba(25,170,182,0.48)', '#18c8d8', 'rgba(25,170,182,0.20)', { color: '#b0eef4', fontStyle: 'italic', fontSize: 'clamp(0.9rem,1.56vw,1.04rem)', lineHeight: 1.46 } as React.CSSProperties),
 
-  // Story group (right column)
-  motivation:  T('linear-gradient(145deg,rgba(4,14,40,0.72),rgba(2,8,24,0.97))',        'rgba(50,110,210,0.50)', '#5a94e0', 'rgba(50,110,210,0.22)', { color: '#c8d8f8', fontSize: 'clamp(0.86rem,1.52vw,1.0rem)', lineHeight: 1.44 } as React.CSSProperties),
-  secret:      T('linear-gradient(145deg,rgba(36,4,4,0.72),rgba(16,2,2,0.97))',         'rgba(170,30,30,0.52)',  '#c83838', 'rgba(170,30,30,0.24)',  { color: '#f4c4c4', fontSize: 'clamp(0.86rem,1.52vw,1.0rem)', lineHeight: 1.44 } as React.CSSProperties),
-  mannerism:   T('linear-gradient(145deg,rgba(36,16,2,0.72),rgba(18,8,2,0.97))',        'rgba(200,120,20,0.52)', '#e09030', 'rgba(200,120,20,0.24)', { color: '#f4dca8', fontSize: 'clamp(0.86rem,1.52vw,1.0rem)', lineHeight: 1.44 } as React.CSSProperties),
-  relation:    T('linear-gradient(145deg,rgba(36,24,2,0.72),rgba(18,12,2,0.97))',       'rgba(200,160,20,0.52)', '#d4a820', 'rgba(200,160,20,0.24)', { color: '#f4e4a8', fontSize: 'clamp(0.86rem,1.52vw,1.0rem)', lineHeight: 1.44 } as React.CSSProperties),
+  // ── Group: Appearance  →  Green ────────────────────────────────────────────
+  appearance: T('linear-gradient(160deg,rgba(3,20,5,0.97) 0%,rgba(2,12,3,0.97) 100%)',   'rgba(35,158,55,0.48)',  '#28c040', 'rgba(35,158,55,0.20)',  { color: '#aaeab8', fontSize: 'clamp(0.78rem,1.22vw,0.9rem)', lineHeight: 1.38 } as React.CSSProperties),
 
-  // Footer
-  hook:        T('linear-gradient(145deg,rgba(40,4,4,0.80),rgba(18,2,2,0.98))',         'rgba(190,28,28,0.62)',  '#e04848', 'rgba(190,28,28,0.28)',  { color: '#f8cccc', fontSize: 'clamp(0.88rem,1.56vw,1.04rem)', lineHeight: 1.44, fontWeight: 700 } as React.CSSProperties),
-  howtoplay:   T('linear-gradient(145deg,rgba(28,16,2,0.82),rgba(14,8,2,0.98))',        'rgba(158,108,24,0.48)', '#c89020', 'rgba(158,108,24,0.22)', { color: '#f0dcaa', fontStyle: 'italic', fontSize: 'clamp(0.86rem,1.52vw,1.0rem)', lineHeight: 1.44 } as React.CSSProperties),
+  // ── Group: Personality / Ideal / Bond / Flaw  →  Purple / Violet ───────────
+  traits:     T('linear-gradient(160deg,rgba(22,5,42,0.97) 0%,rgba(12,3,24,0.97) 100%)', 'rgba(115,48,195,0.52)', '#9248e0', 'rgba(115,48,195,0.24)', { color: '#d8ccf8', fontSize: 'clamp(0.86rem,1.50vw,0.98rem)', lineHeight: 1.44 } as React.CSSProperties),
+
+  // ── Group: Motivation / Secret / Mannerism / Relation  →  Deep Blue ────────
+  story:      T('linear-gradient(160deg,rgba(3,10,30,0.97) 0%,rgba(2,6,20,0.97) 100%)',  'rgba(38,78,185,0.52)',  '#4068d8', 'rgba(38,78,185,0.24)',  { color: '#c0d0f4', fontSize: 'clamp(0.86rem,1.50vw,0.98rem)', lineHeight: 1.44 } as React.CSSProperties),
+
+  // ── Group: Scene Hook / How To Play  →  Dark Red / Burgundy ───────────────
+  footer:     T('linear-gradient(160deg,rgba(30,3,6,0.97) 0%,rgba(16,2,4,0.97) 100%)',   'rgba(148,18,32,0.55)',  '#b81828', 'rgba(148,18,32,0.26)',  { color: '#f0c4c8', fontSize: 'clamp(0.86rem,1.50vw,0.98rem)', lineHeight: 1.44 } as React.CSSProperties),
 }
 
 type CardVariant = keyof typeof CARD_THEMES
 
-function InfoCard({ title, children, onReroll, variant = 'personality' }: { title: string; children: React.ReactNode; onReroll?: () => void; variant?: CardVariant }) {
+function InfoCard({ title, children, onReroll, variant = 'traits', icon }: { title: string; children: React.ReactNode; onReroll?: () => void; variant?: CardVariant; icon?: React.ReactNode }) {
   const theme = CARD_THEMES[variant]
   return (
     <section style={{
@@ -158,16 +153,17 @@ function InfoCard({ title, children, onReroll, variant = 'personality' }: { titl
       padding: variant === 'accent' ? '14px 14px' : '10px 12px',
       border: `1px solid ${theme.border}`,
       background: theme.bg,
-      boxShadow: 'inset 0 0 20px rgba(0,0,0,0.42), 0 3px 12px rgba(0,0,0,0.24)',
-      minWidth: 0, overflow: 'hidden',
+      boxShadow: 'inset 0 0 22px rgba(0,0,0,0.45), 0 2px 10px rgba(0,0,0,0.28)',
+      minWidth: 0,
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 7 }}>
+        {icon && <span style={{ color: theme.title, opacity: 0.75, lineHeight: 1, flexShrink: 0 }}>{icon}</span>}
         <h3 className="font-cinzel" style={{
           margin: 0, color: theme.title,
-          fontSize: variant === 'accent' ? '0.69rem' : '0.67rem',
-          letterSpacing: '0.13em', fontWeight: 800, textTransform: 'uppercase',
+          fontSize: variant === 'accent' ? '0.68rem' : '0.65rem',
+          letterSpacing: '0.14em', fontWeight: 800, textTransform: 'uppercase',
         }}>{title}</h3>
-        <span style={{ flex: 1, height: 1, background: theme.divider }} />
+        <span style={{ flex: 1, height: '1px', background: theme.divider }} />
         <SmallReroll onClick={onReroll} />
       </div>
       <div className="font-crimson" style={theme.text}>
@@ -210,8 +206,10 @@ function DesktopRedesign({ character, imageUrl, isGenerating, isLoadingImage, im
 
       <header style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: '1fr auto', gap: 12, alignItems: 'start', borderBottom: '1px solid rgba(201,168,76,0.22)', paddingBottom: 10 }}>
         <div>
-          <h1 className="font-cinzel-decorative uppercase" style={{ margin: 0, color: '#f0dfb4', fontSize: 'clamp(1.35rem, 3.2vw, 1.95rem)', lineHeight: 0.98, letterSpacing: '0.035em', textShadow: '0 2px 16px rgba(0,0,0,0.85)' }}>{character.name}</h1>
-          <p className="font-cinzel" style={{ margin: '8px 0 0', color: '#caa85a', fontSize: 'clamp(0.76rem,1.32vw,0.92rem)', letterSpacing: '0.10em' }}>{tr(character, lang, 'species')} · {tr(character, lang, 'characterClass')} · {t(lang, 'level')} {character.level}</p>
+          <h1 className="font-cinzel-decorative uppercase" style={{ margin: 0, color: '#f0dfb4', fontSize: 'clamp(1.3rem, 3.0vw, 1.85rem)', lineHeight: 1.0, letterSpacing: '0.04em', textShadow: '0 2px 18px rgba(0,0,0,0.90)' }}>{character.name}</h1>
+          <p className="font-cinzel" style={{ margin: '7px 0 0', color: '#c8a050', fontSize: 'clamp(0.72rem,1.28vw,0.88rem)', letterSpacing: '0.08em' }}>
+            {tr(character, lang, 'species')} &bull; {tr(character, lang, 'characterClass')} &bull; {tr(character, lang, 'alignment')} &bull; {t(lang, 'level')} {character.level}
+          </p>
         </div>
         <SmallReroll onClick={onRerollName} title="Rul navn om" />
       </header>
@@ -227,119 +225,151 @@ function DesktopRedesign({ character, imageUrl, isGenerating, isLoadingImage, im
             <span style={{ fontSize: 'clamp(0.78rem,1.25vw,0.9rem)', lineHeight: 1.35 }}>{trAppearance(character, lang)}</span>
           </InfoCard>
           <InfoCard title={t(lang, 'combatData')} variant="accent">
-            {/* Top stats: AC · HP · Init */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 7, marginBottom: 8 }}>
-              {([
-                { label: 'AC',   value: c.armorClass,       color: '#5a9fc8', bg: 'rgba(20,50,80,0.38)' },
-                { label: 'HP',   value: c.hitPoints,        color: '#c06060', bg: 'rgba(90,20,20,0.38)' },
-                { label: 'Init', value: (() => { const n = parseInt(String(c.initiative).replace(/[^-\d]/g,'')); return (n >= 0 ? '+' : '') + n })(), color: '#e8d5a0', bg: 'rgba(60,45,10,0.55)' },
-              ] as const).map(({ label, value, color, bg }) => (
-                <div key={label} style={{ textAlign: 'center', borderRadius: 5, border: `1px solid ${color}66`, background: bg, padding: '6px 3px' }}>
-                  <div style={{ fontSize: '0.48rem', letterSpacing: '0.1em', color, textTransform: 'uppercase', fontWeight: 700 }}>{label}</div>
-                  <div style={{ fontSize: '1.0rem', fontWeight: 800, color, lineHeight: 1.1 }}>{value}</div>
-                </div>
-              ))}
-            </div>
-            {/* Secondary stats: Speed · PP · CR */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 6, marginBottom: 9 }}>
-              {([
-                { label: 'Speed', value: c.speed },
-                { label: 'PP',    value: c.passivePerception },
-                { label: 'CR',    value: c.challenge },
-              ] as const).map(({ label, value }) => (
-                <div key={label} style={{ textAlign: 'center', borderRadius: 4, border: '1px solid rgba(44,20,5,0.45)', background: 'rgba(0,0,0,0.22)', padding: '4px 2px' }}>
-                  <div style={{ fontSize: '0.46rem', letterSpacing: '0.09em', color: 'rgba(48,20,5,0.80)', textTransform: 'uppercase', fontWeight: 700 }}>{label}</div>
-                  <div style={{ fontSize: '0.84rem', fontWeight: 700, color: '#2a1304', lineHeight: 1.1 }}>{value}</div>
-                </div>
-              ))}
-            </div>
-            {/* Ability scores with modifier */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gap: 4, marginBottom: 10 }}>
-              {abilityRows.map(([abbr, key]) => {
+            {/* Row 1: STR DEX CON INT (4 cols) */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 5, marginBottom: 5 }}>
+              {abilityRows.slice(0,4).map(([abbr, key]) => {
                 const score = abilities[key]
                 const mod = Math.floor((score - 10) / 2)
-                const modStr = (mod >= 0 ? '+' : '') + mod
                 return (
-                  <div key={abbr} style={{ textAlign: 'center', borderRadius: 4, border: '1px solid rgba(44,20,5,0.38)', background: 'rgba(0,0,0,0.18)', padding: '4px 1px' }}>
-                    <div style={{ fontSize: '0.46rem', letterSpacing: '0.06em', color: 'rgba(48,20,5,0.72)', textTransform: 'uppercase', fontWeight: 700 }}>{abbr}</div>
-                    <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#2a1304', lineHeight: 1 }}>{score}</div>
-                    <div style={{ fontSize: '0.50rem', color: mod >= 0 ? '#2a5c2a' : '#7a2020', fontWeight: 700 }}>{modStr}</div>
+                  <div key={abbr} style={{ textAlign: 'center', borderRadius: 4, border: '1px solid rgba(42,20,4,0.35)', background: 'rgba(0,0,0,0.16)', padding: '4px 1px' }}>
+                    <div style={{ fontSize: '0.44rem', letterSpacing: '0.07em', color: 'rgba(42,20,4,0.68)', textTransform: 'uppercase', fontWeight: 700 }}>{abbr}</div>
+                    <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#251004', lineHeight: 1.0 }}>{score}</div>
+                    <div style={{ fontSize: '0.48rem', color: mod >= 0 ? '#2a5020' : '#7a1818', fontWeight: 700, marginTop: 1 }}>{mod >= 0 ? '+' : ''}{mod}</div>
                   </div>
                 )
               })}
             </div>
-            {/* Weapons at bottom — name first, stats below; weapon names translated by lang */}
-            <div style={{ borderTop: '1px solid rgba(44,20,5,0.35)', paddingTop: 9, display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {[
-                { label: 'M', kind: lang === 'en' ? 'Melee' : 'Nærkamp', name: lang === 'en' ? translateWeaponToEn(c.melee.name) : c.melee.name, toHit: c.melee.toHit, damage: c.melee.damage },
-                { label: 'R', kind: lang === 'en' ? 'Range'  : 'Distance', name: lang === 'en' ? translateWeaponToEn(c.ranged.name) : c.ranged.name, toHit: c.ranged.toHit, damage: c.ranged.damage },
-              ].map(({ label, kind, name, toHit, damage }) => (
-                <div key={kind} style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '1px 7px' }}>
-                  <div style={{
-                    gridRow: '1 / 3', alignSelf: 'center',
-                    width: 18, height: 18, borderRadius: 3,
-                    background: 'rgba(42,19,4,0.30)', border: '1px solid rgba(42,19,4,0.45)',
-                    display: 'grid', placeItems: 'center', flexShrink: 0,
-                    fontSize: '0.56rem', fontWeight: 800, letterSpacing: '0.04em',
-                    color: '#3a1f08', fontFamily: 'var(--font-cinzel)',
-                  }}>{label}</div>
-                  <span style={{ fontWeight: 700, color: '#2a1304', fontSize: '0.78rem', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</span>
-                  <span style={{ fontWeight: 600, color: 'rgba(42,19,4,0.72)', textTransform: 'uppercase', fontSize: '0.52rem', letterSpacing: '0.07em', lineHeight: 1.2 }}>{kind} · {toHit} · {damage}</span>
+            {/* Row 2: WIS CHA AC INIT SPD (5 cols) */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 5, marginBottom: 8 }}>
+              {abilityRows.slice(4,6).map(([abbr, key]) => {
+                const score = abilities[key]
+                const mod = Math.floor((score - 10) / 2)
+                return (
+                  <div key={abbr} style={{ textAlign: 'center', borderRadius: 4, border: '1px solid rgba(42,20,4,0.35)', background: 'rgba(0,0,0,0.16)', padding: '4px 1px' }}>
+                    <div style={{ fontSize: '0.44rem', letterSpacing: '0.07em', color: 'rgba(42,20,4,0.68)', textTransform: 'uppercase', fontWeight: 700 }}>{abbr}</div>
+                    <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#251004', lineHeight: 1.0 }}>{score}</div>
+                    <div style={{ fontSize: '0.48rem', color: mod >= 0 ? '#2a5020' : '#7a1818', fontWeight: 700, marginTop: 1 }}>{mod >= 0 ? '+' : ''}{mod}</div>
+                  </div>
+                )
+              })}
+              {([
+                { label: 'AC',   value: c.armorClass,       color: '#3e8ab0' },
+                { label: 'INIT', value: (() => { const n = parseInt(String(c.initiative).replace(/[^-\d]/g,'')); return (n >= 0 ? '+' : '') + n })(), color: '#c8a030' },
+                { label: 'SPD',  value: c.speed,            color: 'rgba(42,20,4,0.80)' },
+              ] as const).map(({ label, value, color }) => (
+                <div key={label} style={{ textAlign: 'center', borderRadius: 4, border: '1px solid rgba(42,20,4,0.35)', background: 'rgba(0,0,0,0.16)', padding: '4px 1px' }}>
+                  <div style={{ fontSize: '0.44rem', letterSpacing: '0.07em', color: 'rgba(42,20,4,0.68)', textTransform: 'uppercase', fontWeight: 700 }}>{label}</div>
+                  <div style={{ fontSize: label === 'SPD' ? '0.64rem' : '0.92rem', fontWeight: 800, color, lineHeight: 1.1, marginTop: label === 'SPD' ? 3 : 0 }}>{value}</div>
                 </div>
               ))}
             </div>
-            {/* Special ability — 1 class-specific ability for flavour */}
+            {/* Saving Throws */}
             {(() => {
-              const abilities = lang === 'en' ? c.specialAbilitiesEn : c.specialAbilities
-              const ability = abilities?.[0]
+              const prof = character.level >= 17 ? 6 : character.level >= 13 ? 5 : character.level >= 9 ? 4 : character.level >= 5 ? 3 : 2
+              const saves = abilityRows.map(([abbr, key]) => {
+                const mod = Math.floor((abilities[key] - 10) / 2)
+                return { abbr, save: mod + (abbr === 'WIS' || abbr === 'CHA' || abbr === 'CON' ? prof : 0) }
+              })
+              return (
+                <div style={{ marginBottom: 8 }}>
+                  <div className="font-cinzel" style={{ fontSize: '0.50rem', letterSpacing: '0.10em', color: 'rgba(42,20,4,0.65)', textTransform: 'uppercase', marginBottom: 4, fontWeight: 800 }}>
+                    {lang === 'en' ? 'Saving Throws' : 'Kastekast'}
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gap: 4 }}>
+                    {saves.map(({ abbr, save }) => (
+                      <div key={abbr} style={{ textAlign: 'center', borderRadius: 3, border: '1px solid rgba(42,20,4,0.28)', background: 'rgba(0,0,0,0.12)', padding: '3px 1px' }}>
+                        <div style={{ fontSize: '0.42rem', color: 'rgba(42,20,4,0.60)', textTransform: 'uppercase', fontWeight: 700 }}>{abbr}</div>
+                        <div style={{ fontSize: '0.70rem', fontWeight: 800, color: save >= 0 ? '#2a4c18' : '#7a1818' }}>{save >= 0 ? '+' : ''}{save}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )
+            })()}
+            {/* Weapons */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 7, borderTop: '1px solid rgba(42,20,4,0.30)', paddingTop: 8 }}>
+              {[
+                { isMelee: true,  name: lang === 'en' ? translateWeaponToEn(c.melee.name)  : c.melee.name,  toHit: c.melee.toHit,  damage: c.melee.damage,  type: lang === 'en' ? 'Melee Weapon'  : 'Nærkamp'  },
+                { isMelee: false, name: lang === 'en' ? translateWeaponToEn(c.ranged.name) : c.ranged.name, toHit: c.ranged.toHit, damage: c.ranged.damage, type: lang === 'en' ? 'Ranged Weapon' : 'Distance' },
+              ].map(({ isMelee, name, toHit, damage, type }) => (
+                <div key={type} style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', columnGap: 8 }}>
+                  {/* Weapon icon */}
+                  <div style={{ gridRow: '1/3', alignSelf: 'center', width: 20, height: 20, display: 'grid', placeItems: 'center', border: '1px solid rgba(42,20,4,0.40)', borderRadius: 3, background: 'rgba(0,0,0,0.18)' }}>
+                    {isMelee
+                      ? <svg viewBox="0 0 12 12" width="10" height="10" fill="none"><path d="M2 10L9 3M9 3H6M9 3V6" stroke="rgba(42,20,4,0.80)" strokeWidth="1.4" strokeLinecap="round"/><path d="M2 9.5L3 8.5" stroke="rgba(42,20,4,0.60)" strokeWidth="1.2" strokeLinecap="round"/></svg>
+                      : <svg viewBox="0 0 12 12" width="10" height="10" fill="none"><path d="M2 6H9M7 4L9.5 6L7 8" stroke="rgba(42,20,4,0.80)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/><path d="M2 4.5V7.5" stroke="rgba(42,20,4,0.60)" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                    }
+                  </div>
+                  <span style={{ fontWeight: 700, color: '#251004', fontSize: '0.80rem', lineHeight: 1.2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{name}</span>
+                  <span style={{ fontSize: '0.50rem', textTransform: 'uppercase', letterSpacing: '0.07em', color: 'rgba(42,20,4,0.65)', fontWeight: 600, lineHeight: 1.3 }}>{type} &bull; {toHit} &bull; {damage}</span>
+                </div>
+              ))}
+            </div>
+            {/* Special ability */}
+            {(() => {
+              const pool = lang === 'en' ? c.specialAbilitiesEn : c.specialAbilities
+              const ability = pool?.[0]
               if (!ability) return null
               const [abilityName, ...rest] = ability.split(':')
               return (
-                <div style={{ borderTop: '1px solid rgba(44,20,5,0.22)', paddingTop: 5, marginTop: 2 }}>
-                  <span style={{ fontWeight: 800, color: '#3a1f08', fontSize: '0.62rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{abilityName}</span>
-                  {rest.length > 0 && <span style={{ color: 'rgba(42,19,4,0.72)', fontSize: '0.60rem', lineHeight: 1.25, display: 'block', marginTop: 1 }}>{rest.join(':').trim()}</span>}
+                <div style={{ borderTop: '1px solid rgba(42,20,4,0.25)', paddingTop: 6, marginTop: 6 }}>
+                  <span className="font-cinzel" style={{ fontWeight: 800, color: '#251004', fontSize: '0.58rem', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 2 }}>{abilityName}</span>
+                  {rest.length > 0 && <span style={{ color: 'rgba(42,20,4,0.72)', fontSize: '0.60rem', lineHeight: 1.30, display: 'block' }}>{rest.join(':').trim()}</span>}
                 </div>
               )
             })()}
           </InfoCard>
         </aside>
 
+        {/* Right section: First Impression → Stat Row → Trait/Story columns */}
         <section style={{ display: 'grid', gridTemplateRows: 'auto auto 1fr', gap: 10 }}>
           <InfoCard title={t(lang, 'firstImpression')} variant="impression">
             {tr(character, lang, 'firstImpression')}
           </InfoCard>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 7 }}>
-            <InfoCard title={t(lang, 'race')} variant="stat"><b style={{ fontSize: 'clamp(0.72rem,1.1vw,0.88rem)', wordBreak: 'break-word', hyphens: 'auto' }}>{tr(character, lang, 'species')}</b></InfoCard>
-            <InfoCard title={t(lang, 'class')} variant="stat"><b style={{ fontSize: 'clamp(0.72rem,1.1vw,0.88rem)', wordBreak: 'break-word', hyphens: 'auto' }}>{tr(character, lang, 'characterClass')}</b></InfoCard>
-            <InfoCard title={t(lang, 'alignment')} variant="stat"><b style={{ fontSize: 'clamp(0.72rem,1.1vw,0.88rem)', wordBreak: 'break-word', hyphens: 'auto' }}>{tr(character, lang, 'alignment')}</b></InfoCard>
-            <InfoCard title={t(lang, 'level')} variant="stat"><b style={{ fontSize: 'clamp(0.72rem,1.1vw,0.88rem)' }}>{character.level}</b></InfoCard>
+
+          {/* Stat row — all four share the same Blue-Cyan colour; decorative icons */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 8 }}>
+            {([
+              { key: 'race'      as const, val: tr(character, lang, 'species'),        icon: <svg viewBox="0 0 14 14" width="10" height="10" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="0.9" opacity="0.7"/><path d="M7 4v3l2 1.5" stroke="currentColor" strokeWidth="0.9" strokeLinecap="round"/><circle cx="7" cy="7" r="1.2" fill="currentColor" opacity="0.5"/></svg> },
+              { key: 'class'     as const, val: tr(character, lang, 'characterClass'), icon: <svg viewBox="0 0 14 14" width="10" height="10" fill="none"><path d="M7 2L8.2 5.5H12L9.2 7.5L10.2 11L7 9L3.8 11L4.8 7.5L2 5.5H5.8Z" stroke="currentColor" strokeWidth="0.9" strokeLinejoin="round" opacity="0.7"/></svg> },
+              { key: 'alignment' as const, val: tr(character, lang, 'alignment'),      icon: <svg viewBox="0 0 14 14" width="10" height="10" fill="none"><circle cx="7" cy="7" r="4.5" stroke="currentColor" strokeWidth="0.8" opacity="0.6"/><path d="M7 3.5V7M7 7L9.5 9.5M7 7L4.5 9.5" stroke="currentColor" strokeWidth="0.9" strokeLinecap="round"/></svg> },
+              { key: 'level'     as const, val: String(character.level),               icon: <svg viewBox="0 0 14 14" width="10" height="10" fill="none"><path d="M7 2.5L8.5 5.5L12 6L9.5 8.5L10 12L7 10.5L4 12L4.5 8.5L2 6L5.5 5.5Z" stroke="currentColor" strokeWidth="0.9" strokeLinejoin="round" opacity="0.7"/></svg> },
+            ]).map(({ key, val, icon }) => (
+              <InfoCard key={key} title={t(lang, key === 'level' ? 'level' : key)} variant="stat" icon={icon}>
+                <b style={{ fontSize: 'clamp(0.72rem,1.08vw,0.86rem)', wordBreak: 'break-word', hyphens: 'auto', display: 'block', marginTop: 2 }}>{val}</b>
+              </InfoCard>
+            ))}
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 3px 1fr', gap: '0 8px' }}>
-            <div style={{ display: 'grid', gap: 8, alignContent: 'start' }}>
-              <InfoCard variant="personality" title={t(lang, 'personalityTrait')} onReroll={() => onRerollField('personalityTrait')}>{tr(character, lang, 'personalityTrait')}</InfoCard>
-              <InfoCard variant="ideal"       title={t(lang, 'ideal')}            onReroll={() => onRerollField('ideal')}>{tr(character, lang, 'ideal')}</InfoCard>
-              <InfoCard variant="bond"        title={t(lang, 'bond')}             onReroll={() => onRerollField('bond')}>{tr(character, lang, 'bond')}</InfoCard>
-              <InfoCard variant="flaw"        title={t(lang, 'flaw')}             onReroll={() => onRerollField('flaw')}>{tr(character, lang, 'flaw')}</InfoCard>
+
+          {/* Trait / Story columns — equal height rows via shared grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 4px 1fr', gap: '0 8px' }}>
+            {/* Left: Personality group — Purple */}
+            <div style={{ display: 'grid', gridTemplateRows: 'repeat(4,minmax(0,1fr))', gap: 8 }}>
+              <InfoCard variant="traits" title={t(lang, 'personalityTrait')} onReroll={() => onRerollField('personalityTrait')}>{tr(character, lang, 'personalityTrait')}</InfoCard>
+              <InfoCard variant="traits" title={t(lang, 'ideal')}            onReroll={() => onRerollField('ideal')}>{tr(character, lang, 'ideal')}</InfoCard>
+              <InfoCard variant="traits" title={t(lang, 'bond')}             onReroll={() => onRerollField('bond')}>{tr(character, lang, 'bond')}</InfoCard>
+              <InfoCard variant="traits" title={t(lang, 'flaw')}             onReroll={() => onRerollField('flaw')}>{tr(character, lang, 'flaw')}</InfoCard>
             </div>
-            {/* vertical divider — gradient blending purple → blue */}
-            <div style={{ background: 'linear-gradient(to bottom, transparent 5%, rgba(115,65,200,0.25) 25%, rgba(50,100,200,0.25) 75%, transparent 95%)', borderRadius: 2 }} />
-            <div style={{ display: 'grid', gap: 8, alignContent: 'start' }}>
-              <InfoCard variant="motivation" title={t(lang, 'motivation')} onReroll={() => onRerollField('motivation')}>{tr(character, lang, 'motivation')}</InfoCard>
-              <InfoCard variant="secret"     title={t(lang, 'secret')}     onReroll={() => onRerollField('secret')}>{tr(character, lang, 'secret')}</InfoCard>
-              <InfoCard variant="mannerism"  title={t(lang, 'mannerism')}  onReroll={() => onRerollField('mannerism')}>{tr(character, lang, 'mannerism')}</InfoCard>
-              <InfoCard variant="relation"   title={t(lang, 'relation')}   onReroll={() => onRerollField('relationship')}>{tr(character, lang, 'relationship')}</InfoCard>
+            {/* Divider */}
+            <div style={{ background: 'linear-gradient(to bottom, transparent 4%, rgba(90,50,180,0.22) 20%, rgba(38,70,180,0.22) 80%, transparent 96%)', borderRadius: 2 }} />
+            {/* Right: Story group — Deep Blue */}
+            <div style={{ display: 'grid', gridTemplateRows: 'repeat(4,minmax(0,1fr))', gap: 8 }}>
+              <InfoCard variant="story" title={t(lang, 'motivation')} onReroll={() => onRerollField('motivation')}>{tr(character, lang, 'motivation')}</InfoCard>
+              <InfoCard variant="story" title={t(lang, 'secret')}     onReroll={() => onRerollField('secret')}>{tr(character, lang, 'secret')}</InfoCard>
+              <InfoCard variant="story" title={t(lang, 'mannerism')}  onReroll={() => onRerollField('mannerism')}>{tr(character, lang, 'mannerism')}</InfoCard>
+              <InfoCard variant="story" title={t(lang, 'relation')}   onReroll={() => onRerollField('relationship')}>{tr(character, lang, 'relationship')}</InfoCard>
             </div>
           </div>
         </section>
       </main>
 
-      {/* ── Full-width footer row: Scene Hook + How To Play ─────────────── */}
-      <div style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: character.howToPlay ? '1fr 1fr' : '1fr', gap: 10, marginTop: 2 }}>
-        <InfoCard variant="hook" title={t(lang, 'sceneHook')} onReroll={() => onRerollField('sceneHook')}>
+      {/* ── Full-width footer: Scene Hook + How To Play — both Dark Red ─── */}
+      <div style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: character.howToPlay ? '1fr 1fr' : '1fr', gap: 10, marginTop: 4 }}>
+        <InfoCard variant="footer" title={t(lang, 'sceneHook')} onReroll={() => onRerollField('sceneHook')}>
           <strong>{tr(character, lang, 'sceneHook')}</strong>
         </InfoCard>
         {character.howToPlay && (
-          <InfoCard variant="howtoplay" title={t(lang, 'howToPlay')}>
+          <InfoCard variant="footer" title={t(lang, 'howToPlay')}>
             <em>{character.translations?.[lang]?.howToPlay ?? character.howToPlay}</em>
           </InfoCard>
         )}

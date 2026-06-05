@@ -139,44 +139,68 @@ function PortraitPanel({ character, imageUrl, isLoadingImage, imageStartedAt, qu
       )}
 
       {/* START PORTRAIT ON DEMAND SYSTEM — silhouette placeholder */}
-      {/* Shown when no portrait exists yet, AND while loading (behind loading overlay) */}
       {character && !imageUrl && (
-        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 50% 32%, rgba(18,10,3,1) 0%, rgba(5,3,2,1) 100%)' }}>
-          {/* Sigil rings */}
-          <svg viewBox="0 0 200 260" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.55 }} aria-hidden>
-            {/* Outer decorative rings */}
-            <circle cx="100" cy="145" r="88" fill="none" stroke="rgba(201,168,76,0.08)" strokeWidth="0.7"/>
-            <circle cx="100" cy="145" r="72" fill="none" stroke="rgba(201,168,76,0.06)" strokeWidth="0.5"/>
-            {/* Eight-pointed arcane sigil */}
-            <path d="M100 57 L104 82 L126 66 L111 86 L136 90 L111 94 L126 114 L104 98 L100 123 L96 98 L74 114 L89 94 L64 90 L89 86 L74 66 L96 82 Z"
-              fill="rgba(201,168,76,0.04)" stroke="rgba(201,168,76,0.12)" strokeWidth="0.6"/>
-            {/* Inner ring with rune marks */}
-            <circle cx="100" cy="90" r="50" fill="none" stroke="rgba(201,168,76,0.05)" strokeWidth="0.5"/>
-            {/* Silhouette — head */}
-            <ellipse cx="100" cy="68" rx="22" ry="23" fill="rgba(8,6,3,0.90)"/>
-            {/* Hood/hair hint */}
-            <path d="M78 58 C75 44 82 34 100 32 C118 34 125 44 122 58 C118 49 112 44 100 43 C88 44 82 49 78 58Z" fill="rgba(12,8,4,0.80)"/>
-            {/* Neck */}
-            <rect x="93" y="89" width="14" height="11" rx="2" fill="rgba(8,6,3,0.90)"/>
-            {/* Shoulders broad cloak */}
-            <path d="M26 128 C28 108 54 97 100 96 C146 97 172 108 174 128 L168 220 L32 220 Z" fill="rgba(8,6,3,0.82)"/>
-            {/* Pauldrons */}
-            <ellipse cx="34" cy="122" rx="20" ry="11" fill="rgba(6,4,2,0.88)"/>
-            <ellipse cx="166" cy="122" rx="20" ry="11" fill="rgba(6,4,2,0.88)"/>
-            {/* Cloak folds */}
-            <path d="M26 128 L14 220 L32 220" fill="rgba(6,4,2,0.65)"/>
-            <path d="M174 128 L186 220 L168 220" fill="rgba(6,4,2,0.65)"/>
-            {/* Belt/equipment hint */}
-            <rect x="68" y="168" width="64" height="5" rx="2" fill="rgba(12,8,4,0.60)"/>
-            {/* Subtle chest detail */}
-            <path d="M85 100 Q100 108 115 100" fill="none" stroke="rgba(201,168,76,0.06)" strokeWidth="0.8"/>
+        <div className="absolute inset-0" style={{
+          background: 'radial-gradient(ellipse at 50% 38%, rgba(30,18,6,1) 0%, rgba(10,6,2,1) 60%, rgba(4,3,1,1) 100%)',
+        }}>
+          <svg
+            viewBox="0 0 200 270"
+            preserveAspectRatio="xMidYMid meet"
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+            aria-hidden
+          >
+            {/* ── Outer decorative frame ────────────────────────────────── */}
+            <rect x="10" y="10" width="180" height="250" fill="none" stroke="rgba(201,168,76,0.20)" strokeWidth="0.8"/>
+            <rect x="14" y="14" width="172" height="242" fill="none" stroke="rgba(201,168,76,0.10)" strokeWidth="0.5"/>
             {/* Corner ornaments */}
-            <path d="M10 10 L10 26 M10 10 L26 10" stroke="rgba(201,168,76,0.28)" strokeWidth="0.8" fill="none"/>
-            <path d="M190 10 L190 26 M190 10 L174 10" stroke="rgba(201,168,76,0.28)" strokeWidth="0.8" fill="none"/>
-            <path d="M10 250 L10 234 M10 250 L26 250" stroke="rgba(201,168,76,0.28)" strokeWidth="0.8" fill="none"/>
-            <path d="M190 250 L190 234 M190 250 L174 250" stroke="rgba(201,168,76,0.28)" strokeWidth="0.8" fill="none"/>
-            {/* Name at bottom */}
-            <text x="100" y="242" textAnchor="middle" fontFamily="serif" fontSize="7" letterSpacing="2" fill="rgba(201,168,76,0.25)">{character.name.toUpperCase()}</text>
+            <path d="M10 10 L10 22 M10 10 L22 10" stroke="rgba(201,168,76,0.50)" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
+            <path d="M190 10 L190 22 M190 10 L178 10" stroke="rgba(201,168,76,0.50)" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
+            <path d="M10 260 L10 248 M10 260 L22 260" stroke="rgba(201,168,76,0.50)" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
+            <path d="M190 260 L190 248 M190 260 L178 260" stroke="rgba(201,168,76,0.50)" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
+
+            {/* ── Arcane sigil circle ───────────────────────────────────── */}
+            <circle cx="100" cy="148" r="80" fill="none" stroke="rgba(201,168,76,0.12)" strokeWidth="0.7"/>
+            <circle cx="100" cy="148" r="64" fill="none" stroke="rgba(201,168,76,0.09)" strokeWidth="0.5"/>
+            {/* Eight-pointed star sigil */}
+            <path d="M100 84 L103.5 102 L120 92 L110 108 L128 112 L110 116 L120 132 L103.5 122 L100 140 L96.5 122 L80 132 L90 116 L72 112 L90 108 L80 92 L96.5 102 Z"
+              fill="rgba(201,168,76,0.06)" stroke="rgba(201,168,76,0.20)" strokeWidth="0.7" strokeLinejoin="round"/>
+            {/* Inner circle */}
+            <circle cx="100" cy="112" r="28" fill="none" stroke="rgba(201,168,76,0.10)" strokeWidth="0.6"/>
+            {/* Rune tick marks on outer circle */}
+            {[0,45,90,135,180,225,270,315].map((deg) => {
+              const rad = (deg * Math.PI) / 180
+              const x1 = 100 + 80 * Math.cos(rad - Math.PI/2)
+              const y1 = 148 + 80 * Math.sin(rad - Math.PI/2)
+              const x2 = 100 + 74 * Math.cos(rad - Math.PI/2)
+              const y2 = 148 + 74 * Math.sin(rad - Math.PI/2)
+              return <line key={deg} x1={x1} y1={y1} x2={x2} y2={y2} stroke="rgba(201,168,76,0.22)" strokeWidth="0.8"/>
+            })}
+
+            {/* ── High-contrast silhouette ──────────────────────────────── */}
+            {/* Head — strong clear profile */}
+            <ellipse cx="100" cy="62" rx="24" ry="26" fill="rgba(4,2,1,0.98)"/>
+            {/* Slightly pointed ear suggestion (fantasy) */}
+            <path d="M76 52 C73 46 76 40 80 44" fill="rgba(4,2,1,0.98)"/>
+            {/* Hair flowing back */}
+            <path d="M76 46 C68 42 62 50 65 62 C68 70 74 72 78 68" fill="rgba(4,2,1,0.95)"/>
+            {/* Neck */}
+            <rect x="93" y="86" width="14" height="14" rx="2" fill="rgba(4,2,1,0.98)"/>
+            {/* Broad cloaked shoulders */}
+            <path d="M22 138 C24 114 52 100 100 98 C148 100 176 114 178 138 L174 230 L26 230 Z" fill="rgba(4,2,1,0.95)"/>
+            {/* Pauldron highlights (shoulder armour plates) */}
+            <ellipse cx="28" cy="130" rx="22" ry="14" fill="rgba(3,2,1,0.97)"/>
+            <ellipse cx="172" cy="130" rx="22" ry="14" fill="rgba(3,2,1,0.97)"/>
+            {/* Cloak edges — slightly lighter to create depth */}
+            <path d="M22 138 L10 230 L26 230" fill="rgba(6,4,2,0.75)"/>
+            <path d="M178 138 L190 230 L174 230" fill="rgba(6,4,2,0.75)"/>
+            {/* Subtle collar/chest detail */}
+            <path d="M86 100 Q100 110 114 100" fill="none" stroke="rgba(201,168,76,0.12)" strokeWidth="1.2"/>
+            {/* Belt */}
+            <rect x="72" y="178" width="56" height="6" rx="2" fill="rgba(6,4,2,0.90)"/>
+            <rect x="97" y="176" width="6" height="10" rx="1" fill="rgba(20,14,6,0.85)"/>
+
+            {/* ── Name label ───────────────────────────────────────────── */}
+            <text x="100" y="253" textAnchor="middle" fontFamily="Georgia, serif" fontSize="7.5" letterSpacing="2.5" fill="rgba(201,168,76,0.40)">{character.name.toUpperCase()}</text>
           </svg>
         </div>
       )}
