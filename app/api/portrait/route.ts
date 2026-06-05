@@ -171,6 +171,7 @@ async function generatePollinationsImage(
   // flux produces far better fantasy portrait quality than sana.
   // flux-realism adds a realism LoRA on top — ideal for cinematic D&D portraits.
   const model = quality === 'high' ? 'flux-realism' : 'flux'
+  // Note: 'fast' uses 'flux' (~6-10s), 'high' uses 'flux-realism' (~15-25s)
   const url = `https://image.pollinations.ai/prompt/${encoded}?width=${width}&height=${height}&nologo=true&seed=${seed}&model=${model}&enhance=false&safe=true&cache=false`
 
   let lastError: unknown

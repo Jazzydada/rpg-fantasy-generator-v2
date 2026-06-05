@@ -273,7 +273,7 @@ export default function CharacterGenerator() {
   const [exportingPng,   setExportingPng]   = useState(false)
   const [savedCharacters, setSavedCharacters] = useState<Character[]>(() => loadSavedCharacters())
   const [saveFlash,      setSaveFlash]      = useState(false)
-  const [quality,        setQuality]        = useState<'fast' | 'high'>('high')
+  const [quality,        setQuality]        = useState<'fast' | 'high'>('fast')
   const [imageProvider,  setImageProvider]  = useState<string | null>(null)
   const [imageStyle,     setImageStyle]     = useState('Cinematic')
   const [portraitType,   setPortraitType]   = useState('Three Quarter')
@@ -703,7 +703,7 @@ export default function CharacterGenerator() {
         {/* ── Footer ─────────────────────────────────────────────────────────── */}
         <footer className="py-4 text-center">
           <p className="font-cinzel uppercase tracking-widest" style={{ fontSize: '0.5rem', color: 'rgba(201,168,76,0.15)' }}>
-            Portrætter genereret med Pollinations · flux-realism model
+            Portrætter genereret med Pollinations · flux model
           </p>
         </footer>
       </div>

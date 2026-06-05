@@ -52,7 +52,7 @@ function PortraitPanel({ character, imageUrl, isLoadingImage, imageStartedAt, qu
   }, [onImageLoad])
 
   const showLoading = !!character && isLoadingImage && !imgError
-  const estimate = quality === 'high' ? 18 : 10
+  const estimate = quality === 'high' ? 20 : 9
   const remaining = Math.max(0, estimate - elapsed)
   const progress = Math.min(100, Math.round((elapsed / estimate) * 100))
 
