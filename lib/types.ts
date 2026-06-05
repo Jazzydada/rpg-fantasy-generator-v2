@@ -24,6 +24,7 @@ export interface CombatStats {
   melee: AttackBlock
   ranged: AttackBlock
   specialAbilities: string[]
+  specialAbilitiesEn: string[]
 }
 
 // START INSTANT LANGUAGE SWITCH
@@ -48,6 +49,7 @@ export interface CharacterTranslations {
     gmSummary: string
     inventoryItem: string
     appearance: string
+    howToPlay: string
   }
   en: {
     species: string
@@ -67,6 +69,7 @@ export interface CharacterTranslations {
     gmSummary: string
     inventoryItem: string
     appearance: string
+    howToPlay: string
   }
 }
 // END INSTANT LANGUAGE SWITCH
@@ -92,6 +95,7 @@ export interface Character {
   relationship: string
   sceneHook: string
   gmSummary: string
+  howToPlay: string
   midjourneyPrompt: string
   perchancePrompt: string
   negativePrompt: string

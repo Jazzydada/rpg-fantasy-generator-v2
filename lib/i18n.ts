@@ -25,6 +25,7 @@ const LABELS: Record<string, Record<Lang, string>> = {
   mannerism:          { da: 'SÆRKENDE',            en: 'MANNERISM' },
   relation:           { da: 'RELATION',            en: 'RELATION' },
   sceneHook:          { da: 'SCENEHOOK',           en: 'SCENE HOOK' },
+  howToPlay:          { da: 'SPIL SOM',            en: 'HOW TO PLAY' },
 
   // CharacterSheet — loading / empty state
   consulting:         { da: 'Konsulterer skæbnen…', en: 'Consulting the fates…' },

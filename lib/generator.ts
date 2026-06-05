@@ -9,6 +9,7 @@ import {
 import {
   FIRST_IMPRESSIONS, MOTIVATIONS, SECRETS, MANNERISMS,
   RELATION_TARGETS, RELATION_VERBS, SCENE_HOOKS, PORTRAIT_PROMPT_NOTES,
+  HOW_TO_PLAY,
 } from './npcData'
 import {
   PERSONALITY_TRAITS_EN, IDEALS_EN, BONDS_EN, FLAWS_EN,
@@ -19,9 +20,10 @@ import {
 import {
   FIRST_IMPRESSIONS_EN, MOTIVATIONS_EN, SECRETS_EN, MANNERISMS_EN,
   RELATION_TARGETS_EN, RELATION_VERBS_EN, SCENE_HOOKS_EN,
+  HOW_TO_PLAY_EN,
 } from './npcDataEn'
 import { generateImagePrompt, CLASS_VISUAL_PRIORITY, CLASS_VISUAL_PRIORITY_EN, SPECIES_VISUAL_PRIORITY, SPECIES_VISUAL_PRIORITY_EN, FACE_QUALITY_NEGATIVE, GENDER_VISUAL } from './imagePrompt'
-import type { AttackBlock, Character, AbilityScores, CombatStats } from './types'
+import type { AttackBlock, Character, AbilityScores, CombatStats, CharacterTranslations } from './types'
 import type { Lang } from './i18n'
 
 function pick<T>(arr: T[]): T {
@@ -95,7 +97,7 @@ function modNumber(score: number): number {
 }
 
 function signed(n: number): string {
-  return n >= 0 ? `+${n}` : `${n}`
+  return n >= 0 ? '+${n}' : '${n}'
 }
 
 // ─── Alignment axis helpers ───────────────────────────────────────────────────
@@ -273,7 +275,7 @@ function getNameForRace(race: string, gender?: 'male' | 'female'): string {
               : gender === 'female' ? NAMES_FEMALE
               : NAMES
   const pool = pools[race] ?? NAMES[race] ?? NAMES['Menneske']
-  return `${pick(pool.first)} ${pick(pool.last)}`
+  return '${pick(pool.first)} ${pick(pool.last)}'
 }
 
 function getAppearanceForGender(species: string, gender: 'male' | 'female'): string {
@@ -336,31 +338,59 @@ function damageDieForWeapon(weapon: string): string {
 function buildAttack(name: string, abilityMod: number, prof: number, damageType: string, notes: string): AttackBlock {
   const toHit = signed(abilityMod + prof)
   const dmgMod = abilityMod === 0 ? '' : signed(abilityMod)
-  return { name, toHit, damage: `${damageDieForWeapon(name)}${dmgMod} ${damageType}`, notes }
+  return { name, toHit, damage: '${damageDieForWeapon(name)}${dmgMod} ${damageType}', notes }
 }
 
 function specialAbilitiesForClass(cls: string): string[] {
   const generic = [
     'Hurtig beslutning: kan tage Disengage eller Dash som bonus action 1 gang pr. kamp.',
-    'Skæbneglimt: 1/dag kan NPC’en få advantage på ét vigtigt rul.',
+    'Skæbneglimt: 1/dag kan NPC\'en få advantage på ét vigtigt rul.',
     'Hård erfaring: har advantage på saves mod frygt, når nogen ser på.',
   ]
   const byClass: Record<string, string[]> = {
-    Troldmand: ['Arcane Bolt: ranged spell attack; ved hit tager målet ekstra 1d6 force damage.', 'Shield Rune: +2 AC indtil starten af næste tur, 1/dag.'],
-    Troldkarl: ['Wild Spark: når NPC’en tager skade, slår små gnister tilbage for 1d6 fire damage, 1/dag.', 'Farlig karisma: advantage på ét Deception eller Persuasion-rul.'],
-    Warlock: ['Forbandelse: bonus action; ét mål får -1d4 på næste attack roll.', 'Eldritch Step: teleporterer 30 ft til et sted NPC’en kan se, 1/dag.'],
-    Præst: ['Helende ord: én allieret inden for 60 ft får 1d8 HP tilbage, 1/dag.', 'Hellig vrede: melee-angreb giver +1d6 radiant damage, 1/dag.'],
-    Druide: ['Vild form-glimt: får midlertidigt kløer eller barkhud; +2 AC i én runde.', 'Naturens hvisken: kan spørge dyr eller planter om én enkel ting.'],
-    Jæger: ['Hunter’s Mark: +1d6 skade mod ét udpeget mål.', 'Terrænblik: ignorerer difficult terrain i natur eller ruiner.'],
-    Slyngel: ['Sneak Attack: +1d6 skade én gang pr. tur, hvis målet er distraheret.', 'Cunning Action: Hide, Dash eller Disengage som bonus action.'],
-    Barde: ['Bardisk stikpille: ét mål får disadvantage på næste ability check.', 'Inspirerende replik: en allieret får +1d6 på næste rul.'],
-    Kriger: ['Second Wind: genvinder 1d10+level HP som bonus action, 1/dag.', 'Presset angreb: kan flytte 10 ft efter et hit uden opportunity attack.'],
-    Paladin: ['Smite: +2d8 radiant damage på et melee hit, 1/dag.', 'Aura af trods: allierede tæt på får +1 på saves.'],
-    Barbar: ['Raseri: resistance mod bludgeoning, piercing og slashing i 1 minut.', 'Truende fremtoning: ét mål skal klare Wisdom save eller tøve.'],
-    Munk: ['Flurry: laver ét ekstra ubevæbnet angreb som bonus action.', 'Deflect: reducerer ranged weapon damage med 1d10+DEX.'],
+    Troldmand: ['Arcane Bolt: ranged spell attack; ved hit tager målet ekstra 1d6 force damage.', 'Magic Missile: tre pile rammer automatisk for 1d4+1 force damage hver.', 'Shield: reaktion; +5 AC mod ét angreb.', 'Misty Step: teleporterer 30 ft som bonus action.'],
+    Troldkarl: ['Wild Spark: når NPC\'en tager skade, slår gnister tilbage for 1d6 fire damage, 1/dag.', 'Farlig karisma: advantage på ét Deception eller Persuasion-rul.', 'Scorching Ray: tre stråler; hvert hit giver 2d6 fire damage.'],
+    Warlock: ['Forbandelse: bonus action; ét mål får -1d4 på næste attack roll.', 'Eldritch Step: teleporterer 30 ft til et sted NPC\'en kan se, 1/dag.', 'Armor of Agathys: 5 midlertidige HP; angribere tager 5 cold damage.'],
+    Præst: ['Helende ord: én allieret inden for 60 ft får 1d8 HP tilbage, 1/dag.', 'Hellig vrede: melee-angreb giver +1d6 radiant damage, 1/dag.', 'Guiding Bolt: ranged spell attack; 4d6 radiant damage, næste angreb på målet har advantage.'],
+    Druide: ['Vild form-glimt: får midlertidigt kløer eller barkhud; +2 AC i én runde.', 'Naturens hvisken: kan spørge dyr eller planter om én enkel ting.', 'Thunderwave: 2d8 thunder damage i kube; mål pushes 10 ft.'],
+    Jæger: ['Hunter\'s Mark: +1d6 skade mod ét udpeget mål.', 'Terrænblik: ignorerer difficult terrain i natur eller ruiner.', 'Volley: angriber alle mål i et 10 ft radius med bue.'],
+    Slyngel: ['Sneak Attack: +2d6 skade én gang pr. tur, hvis målet er distraheret.', 'Cunning Action: Hide, Dash eller Disengage som bonus action.', 'Uncanny Dodge: halverer skade fra ét angreb som reaktion.'],
+    Barde: ['Bardisk inspiration: en allieret får +1d6 på næste rul.', 'Dissonant Whispers: 3d6 psychic damage; målet flygter i sin tur.', 'Healing Word: en allieret genvinder 1d4+CHA HP som bonus action.'],
+    Kriger: ['Second Wind: genvinder 1d10+level HP som bonus action, 1/dag.', 'Action Surge: tager en ekstra action i sin tur, 1/dag.', 'Riposte: modangreb som reaktion efter en mislykket fjendtlig attack.'],
+    Paladin: ['Divine Smite: +2d8 radiant damage på et melee hit, 1/dag.', 'Lay on Hands: genopretter op til 5×level HP med berøring.', 'Aura af beskyttelse: allierede tæt på får +CHA på saves.'],
+    Barbar: ['Raseri: resistance mod bludgeoning, piercing og slashing i 1 minut.', 'Reckless Attack: advantage på melee attacks; fjender har advantage mod NPC.', 'Truende fremtoning: ét mål skal klare Wisdom save eller tøve.'],
+    Munk: ['Flurry of Blows: laver to ekstra ubevæbnede angreb som bonus action.', 'Patient Defense: Dodge som bonus action; vanskeligere at ramme.', 'Stunning Strike: mål bruger Constitution save eller er stunned til næste tur.'],
   }
   const pool = byClass[cls] ?? generic
-  return [pick(pool), pick(generic)].filter((v, i, arr) => arr.indexOf(v) === i).slice(0, 2)
+  const chosen = pick(pool)
+  const extra  = pick(generic)
+  return [chosen, ...(chosen !== extra ? [extra] : [])].slice(0, 2)
+}
+
+function specialAbilitiesForClassEn(cls: string): string[] {
+  const generic = [
+    'Quick Thinking: Disengage or Dash as a bonus action once per combat.',
+    'Fate\'s Glimpse: once per day, gain advantage on one important roll.',
+    'Hard Experience: advantage on fear saves when others are watching.',
+  ]
+  const byClass: Record<string, string[]> = {
+    Troldmand: ['Arcane Bolt: ranged spell attack; hit deals extra 1d6 force damage.', 'Magic Missile: three darts hit automatically for 1d4+1 force damage each.', 'Shield: reaction; +5 AC against one attack.', 'Misty Step: teleport 30 ft as a bonus action.'],
+    Troldkarl: ['Wild Spark: when hit, sparks lash back for 1d6 fire damage, 1/day.', 'Dangerous Charm: advantage on one Deception or Persuasion roll.', 'Scorching Ray: three rays; each hit deals 2d6 fire damage.'],
+    Warlock: ['Hex: bonus action; one target gets −1d4 on their next attack roll.', 'Eldritch Step: teleport 30 ft to a visible location, 1/day.', 'Armor of Agathys: 5 temp HP; attackers take 5 cold damage.'],
+    Præst: ['Healing Word: one ally within 60 ft regains 1d8 HP, 1/day.', 'Divine Wrath: melee attack deals +1d6 radiant damage, 1/day.', 'Guiding Bolt: ranged spell attack; 4d6 radiant damage, next attack on target has advantage.'],
+    Druide: ['Wild Shape Surge: briefly gain claws or barkskin; +2 AC for one round.', 'Nature\'s Whisper: ask an animal or plant one simple question.', 'Thunderwave: 2d8 thunder damage in a cube; targets are pushed 10 ft.'],
+    Jæger: ['Hunter\'s Mark: +1d6 damage against one designated target.', 'Terrain Sense: ignore difficult terrain in wilderness or ruins.', 'Volley: attack all targets in a 10 ft radius with a ranged weapon.'],
+    Slyngel: ['Sneak Attack: +2d6 damage once per turn when the target is distracted.', 'Cunning Action: Hide, Dash, or Disengage as a bonus action.', 'Uncanny Dodge: halve damage from one attack as a reaction.'],
+    Barde: ['Bardic Inspiration: one ally gets +1d6 on their next roll.', 'Dissonant Whispers: 3d6 psychic damage; target flees on their turn.', 'Healing Word: one ally regains 1d4+CHA HP as a bonus action.'],
+    Kriger: ['Second Wind: regain 1d10+level HP as a bonus action, 1/day.', 'Action Surge: take one additional action on your turn, 1/day.', 'Riposte: counter-attack as a reaction after a missed enemy strike.'],
+    Paladin: ['Divine Smite: +2d8 radiant damage on a melee hit, 1/day.', 'Lay on Hands: restore up to 5×level HP with a touch.', 'Aura of Protection: nearby allies add +CHA to saving throws.'],
+    Barbar: ['Rage: resistance to bludgeoning, piercing and slashing for 1 minute.', 'Reckless Attack: advantage on melee attacks; enemies gain advantage back.', 'Frightening Presence: one target must succeed on a Wisdom save or hesitate.'],
+    Munk: ['Flurry of Blows: make two extra unarmed strikes as a bonus action.', 'Patient Defense: Dodge as a bonus action; harder to hit.', 'Stunning Strike: target uses Constitution save or is stunned until next turn.'],
+  }
+  const pool = byClass[cls] ?? generic
+  const chosen = pick(pool)
+  const extra  = pick(generic)
+  return [chosen, ...(chosen !== extra ? [extra] : [])].slice(0, 2)
 }
 
 
@@ -395,7 +425,7 @@ const SECRET_EN: Record<string, string> = {
   'har solgt information til en rival for at redde en nær ven.': 'sold information to a rival to save a close friend',
   'bruger et falsk navn og frygter at møde nogen fra sit gamle liv.': 'uses a false name and fears meeting someone from an old life',
   'er den sidste person, der så den forsvundne præst i live.': 'was the last person to see the missing priest alive',
-  'har en lille magisk genstand, som langsomt ændrer ejerens drømme.': 'carries a small magic item that slowly changes its owner’s dreams',
+  'har en lille magisk genstand, som langsomt ændrer ejerens drømme.': 'carries a small magic item that slowly changes its owner\'s dreams',
   'skylder penge til en smuglerkaptajn, der snart kommer for at hente dem.': 'owes money to a smuggler captain who is coming to collect',
   'ved hvor liget er begravet, men ikke hvem der lagde det der.': 'knows where the body is buried, but not who put it there',
   'har engang været medlem af den organisation, de nu advarer imod.': 'was once a member of the organization they now warn against',
@@ -410,7 +440,7 @@ const MANNERISM_EN: Record<string, string> = {
   'retter på manchetten, selv når tøjet er alt for slidt til den slags.': 'adjusts a cuff even when the clothes are far too worn for such refinement',
   'tæller lydløst på fingrene, før de svarer på svære spørgsmål.': 'silently counts on their fingers before answering difficult questions',
   'ser aldrig direkte på den person, de egentlig taler til.': 'never looks directly at the person they are actually speaking to',
-  'bruger folks fulde navn, når de vil have kontrol over samtalen.': 'uses people’s full names when trying to control the conversation',
+  'bruger folks fulde navn, når de vil have kontrol over samtalen.': 'uses people\'s full names when trying to control the conversation',
   'banker to gange på bordet, når de nævner noget overnaturligt.': 'knocks twice on the table whenever mentioning something supernatural',
   'smiler altid et sekund for sent.': 'always smiles one second too late',
   'samler småting op og lægger dem tilbage i perfekt orden.': 'picks up small objects and places them back in perfect order',
@@ -502,9 +532,9 @@ const ITEM_EN: Record<string, string> = {
   'et helligt symbol der aldrig taber glansen': 'a holy symbol that never loses its shine',
   'en flaske lagret dværgwhisky': 'a bottle of aged dwarven whiskey',
   'et sæt belastede terninger': 'a set of loaded dice',
-  'et udforskerkort med ét sted ridset ud': 'an explorer’s map with one location scratched out',
+  'et udforskerkort med ét sted ridset ud': 'an explorer\'s map with one location scratched out',
   'et hætteglas med basiliskblod': 'a vial of basilisk blood',
-  'et sæt tyveværktøj svøbt i oliet klæde': 'thieves’ tools wrapped in oiled cloth',
+  'et sæt tyveværktøj svøbt i oliet klæde': 'thieves\' tools wrapped in oiled cloth',
   'et krigshorn skåret af knogle': 'a war horn carved from bone',
   'et silkebind der siges at give sandt syn': 'a silk blindfold said to grant true sight',
   'en pose tørrede helbredelsesurter': 'a pouch of dried healing herbs',
@@ -522,6 +552,27 @@ const ITEM_EN: Record<string, string> = {
 // as a fallback for characters generated before translations were stored.
 export function translateAppearanceToEn(da: string): string {
   return APPEARANCE_EN[da] ?? da
+}
+
+// Weapon name translation (DA → EN) — used by CharacterCard when lang=EN
+export const WEAPON_DA_TO_EN: Record<string, string> = {
+  'Dolk':             'Dagger',
+  'Stav':             'Staff',
+  'Rapier':           'Rapier',
+  'Kortsværd':        'Shortsword',
+  'Langsværd':        'Longsword',
+  'Økse':             'Axe',
+  'Ubevæbnet slag':   'Unarmed Strike',
+  'Forhekset klinge': 'Hexblade',
+  'Cantrip':          'Cantrip',
+  'Kortbue':          'Shortbow',
+  'Armbrøst':         'Crossbow',
+  'Kasteøkse':        'Handaxe',
+  'Kastedolk':        'Throwing Dagger',
+}
+
+export function translateWeaponToEn(da: string): string {
+  return WEAPON_DA_TO_EN[da] ?? da
 }
 
 function englishOr(raw: string, table: Record<string, string>): string {
@@ -583,7 +634,7 @@ export function buildEnglishPrompts(character: Pick<Character, 'name' | 'species
   // Level tier: higher level = richer/more powerful; alignment colours HOW that manifests
   const tier = levelTierDescriptor(character.level ?? 1, alignmentKey)
 
-  const characterLine = `${character.name}, ${raceFeatures}, ${classEn}, level ${character.level ?? 1} ${tier.tier}`
+  const characterLine = '${character.name}, ${raceFeatures}, ${classEn}, level ${character.level ?? 1} ${tier.tier}'
 
   // START SPECIES VISUAL SYSTEM + START CLASS VISUAL SYSTEM + START FACE QUALITY SYSTEM
   // Priority order: 1. Composition  2. Species  3. Class  4. Style  5. Details
@@ -620,28 +671,28 @@ export function buildEnglishPrompts(character: Pick<Character, 'name' | 'species
     // 5. Style anchor
     'Dungeons and Dragons 2024 sourcebook illustration. Professional fantasy RPG NPC illustration.',
     // 6. Character details
-    `CHARACTER: ${character.name}, level ${character.level ?? 1} ${tier.tier}`,
-    `APPEARANCE: ${appearanceEn}`,
-    `EQUIPMENT: ${itemEn}, ${tier.gear}`,
-    `WEALTH AND STATUS: ${tier.wealth}`,
-    `BEARING AND PRESENCE: ${tier.bearing}`,
-    `BODY LANGUAGE: ${mannerismEn}`,
-    `FIRST IMPRESSION: ${firstImpressionEn}`,
+    'CHARACTER: ${character.name}, level ${character.level ?? 1} ${tier.tier}',
+    'APPEARANCE: ${appearanceEn}',
+    'EQUIPMENT: ${itemEn}, ${tier.gear}',
+    'WEALTH AND STATUS: ${tier.wealth}',
+    'BEARING AND PRESENCE: ${tier.bearing}',
+    'BODY LANGUAGE: ${mannerismEn}',
+    'FIRST IMPRESSION: ${firstImpressionEn}',
     'visible weapons, visible armor, visible belt pouches, visible accessories',
     'natural asymmetric pose, clear readable silhouette',
     'STYLE: cinematic fantasy art, highly detailed professional RPG character portrait, dramatic cinematic lighting, painterly realism',
     'MOOD: story-rich, believable NPC, atmospheric background, sharp focus',
-    speciesNeg ? `NOT: ${speciesNeg}` : '',
+    speciesNeg ? 'NOT: ${speciesNeg}' : '',
   ].filter(Boolean).join(', ')
   // END SPECIES VISUAL SYSTEM / END CLASS VISUAL SYSTEM / END FACE QUALITY SYSTEM
 
   const midjourneyPrompt = [
-    `${character.name}, ${raceFeatures}, ${classEn}, level ${character.level ?? 1} ${tier.tier}`,
-    `MANDATORY RACE: ${raceFeatures}`,
-    `appearance: ${appearanceEn}`,
-    `carrying ${itemEn}`,
-    `equipment quality: ${tier.gear}`,
-    `bearing: ${tier.bearing}`,
+    '${character.name}, ${raceFeatures}, ${classEn}, level ${character.level ?? 1} ${tier.tier}',
+    'MANDATORY RACE: ${raceFeatures}',
+    'appearance: ${appearanceEn}',
+    'carrying ${itemEn}',
+    'equipment quality: ${tier.gear}',
+    'bearing: ${tier.bearing}',
     'three-quarter body portrait, full costume visible, equipment visible, head to knees minimum',
     'cinematic fantasy art, D&D 2024 sourcebook illustration, highly detailed, painterly realism',
     'atmospheric background, dramatic cinematic lighting, sharp focus',
@@ -692,15 +743,16 @@ export function generateCombatStats(characterClass: string, level: number, score
     challenge: level <= 2 ? '1/4–1/2' : level <= 4 ? '1' : level <= 6 ? '2' : '3+',
     melee: buildAttack(meleeName, meleeMod, prof, meleeName === 'Forhekset klinge' ? 'slashing/force' : 'piercing/slashing', 'melee'),
     ranged: buildAttack(rangedName, rangedMod, prof, rangedName === 'Cantrip' ? 'force/fire' : 'piercing', rangedName === 'Cantrip' ? 'range 60 ft' : 'range 80/320'),
-    specialAbilities: specialAbilitiesForClass(characterClass),
+    specialAbilities:   specialAbilitiesForClass(characterClass),
+    specialAbilitiesEn: specialAbilitiesForClassEn(characterClass),
   }
 }
 
 // START INSTANT LANGUAGE SWITCH
 // buildNpcLayer always generates BOTH DA and EN text simultaneously.
-// The active `lang` determines which set is written to the top-level fields
+// The active 'lang' determines which set is written to the top-level fields
 // (for backward compat with display code that reads char.motivation etc.).
-// The full bilingual data is returned in `npcTranslations` so CharacterSheet
+// The full bilingual data is returned in 'npcTranslations' so CharacterSheet
 // can switch languages without re-generating.
 function buildNpcLayer(name: string, species: string, characterClass: string, background: string, appearance: string, level = 1, alignment = '', lang: Lang = 'da') {
   // Pick a random index from the DA pool, use the same index for EN pool
@@ -719,18 +771,20 @@ function buildNpcLayer(name: string, species: string, characterClass: string, ba
   const rvPair  = pickBoth(RELATION_VERBS,    RELATION_VERBS_EN)
   const rtPair  = pickBoth(RELATION_TARGETS,  RELATION_TARGETS_EN)
   const shPair  = pickBoth(SCENE_HOOKS,       SCENE_HOOKS_EN)
+  const htpPair = pickBoth(HOW_TO_PLAY,       HOW_TO_PLAY_EN)
 
   // Top-level fields use the active lang (backward compat)
   const firstImpression = lang === 'en' ? fiPair.en : fiPair.da
   const motivation      = lang === 'en' ? moPair.en : moPair.da
   const secret          = lang === 'en' ? sePair.en : sePair.da
   const mannerism       = lang === 'en' ? maPair.en : maPair.da
-  const relationship    = lang === 'en' ? `${rvPair.en} ${rtPair.en}` : `${rvPair.da} ${rtPair.da}`
+  const relationship    = lang === 'en' ? '${rvPair.en} ${rtPair.en}' : '${rvPair.da} ${rtPair.da}'
   const sceneHook       = lang === 'en' ? shPair.en : shPair.da
+  const howToPlay       = lang === 'en' ? htpPair.en : htpPair.da
 
   const gmSummary = lang === 'en'
-    ? `${name} is a ${species.toLowerCase()} ${characterClass.toLowerCase()}. ${fiPair.en} They ${moPair.en} Secret: ${sePair.en}`
-    : `${name} er en ${species.toLowerCase()} ${characterClass.toLowerCase()}. ${fiPair.da} Personen ${moPair.da} Hemmelighed: ${sePair.da}`
+    ? '${name} is a ${species.toLowerCase()} ${characterClass.toLowerCase()}. ${fiPair.en} They ${moPair.en} Secret: ${sePair.en}'
+    : '${name} er en ${species.toLowerCase()} ${characterClass.toLowerCase()}. ${fiPair.da} Personen ${moPair.da} Hemmelighed: ${sePair.da}'
 
   const prompts = buildEnglishPrompts({
     name, species, characterClass, appearance, inventoryItem: pick(INVENTORY_ITEMS), firstImpression: fiPair.da, mannerism: maPair.da, level, alignment,
@@ -743,27 +797,29 @@ function buildNpcLayer(name: string, species: string, characterClass: string, ba
       motivation:      moPair.da,
       secret:          sePair.da,
       mannerism:       maPair.da,
-      relationship:    `${rvPair.da} ${rtPair.da}`,
+      relationship:    '${rvPair.da} ${rtPair.da}',
       sceneHook:       shPair.da,
-      gmSummary:       `${name} er en ${species.toLowerCase()} ${characterClass.toLowerCase()}. ${fiPair.da} Personen ${moPair.da} Hemmelighed: ${sePair.da}`,
+      howToPlay:       htpPair.da,
+      gmSummary:       '${name} er en ${species.toLowerCase()} ${characterClass.toLowerCase()}. ${fiPair.da} Personen ${moPair.da} Hemmelighed: ${sePair.da}',
     },
     en: {
       firstImpression: fiPair.en,
       motivation:      moPair.en,
       secret:          sePair.en,
       mannerism:       maPair.en,
-      relationship:    `${rvPair.en} ${rtPair.en}`,
+      relationship:    '${rvPair.en} ${rtPair.en}',
       sceneHook:       shPair.en,
-      gmSummary:       `${name} is a ${species.toLowerCase()} ${characterClass.toLowerCase()}. ${fiPair.en} They ${moPair.en} Secret: ${sePair.en}`,
+      howToPlay:       htpPair.en,
+      gmSummary:       '${name} is a ${species.toLowerCase()} ${characterClass.toLowerCase()}. ${fiPair.en} They ${moPair.en} Secret: ${sePair.en}',
     },
   }
 
-  return { firstImpression, motivation, secret, mannerism, relationship, sceneHook, gmSummary, npcTranslations, ...prompts }
+  return { firstImpression, motivation, secret, mannerism, relationship, sceneHook, howToPlay, gmSummary, npcTranslations, ...prompts }
 }
 // END INSTANT LANGUAGE SWITCH
 
 export function rerollName(character: Character): Character {
-  return refreshPrompts({ ...character, id: `${character.id}_name_${Date.now()}`, name: getNameForRace(internalRace(character.species)) })
+  return refreshPrompts({ ...character, id: '${character.id}_name_${Date.now()}', name: getNameForRace(internalRace(character.species)) })
 }
 
 export function rerollCoreTraits(character: Character, lang: Lang = 'da'): Character {
@@ -782,7 +838,7 @@ export function rerollCoreTraits(character: Character, lang: Lang = 'da'): Chara
   const prev = character.translations ?? { da: {} as never, en: {} as never }
   return {
     ...character,
-    id: `${character.id}_traits_${Date.now()}`,
+    id: '${character.id}_traits_${Date.now()}',
     personalityTrait: lang === 'en' ? pt.en : pt.da,
     ideal:            lang === 'en' ? id.en : id.da,
     bond:             lang === 'en' ? bd.en : bd.da,
@@ -811,7 +867,7 @@ export function rerollNpcTraits(character: Character, lang: Lang = 'da'): Charac
   const prev = character.translations ?? { da: {} as never, en: {} as never }
   return {
     ...character,
-    id: `${character.id}_npc_${Date.now()}`,
+    id: '${character.id}_npc_${Date.now()}',
     ...npcLayerBase,
     ...prompts,
     translations: {
@@ -842,7 +898,7 @@ function refreshPrompts(character: Character): Character {
 
 export function rerollSingleField(character: Character, field: RerollField, lang: Lang = 'da'): Character {
   // START INSTANT LANGUAGE SWITCH — always reroll both DA and EN simultaneously
-  const next: Character = { ...character, id: `${character.id}_${field}_${Date.now()}` }
+  const next: Character = { ...character, id: '${character.id}_${field}_${Date.now()}' }
   const prev = character.translations ?? { da: {} as never, en: {} as never }
   const newTr = { da: { ...prev.da }, en: { ...prev.en } }
 
@@ -908,9 +964,9 @@ export function rerollSingleField(character: Character, field: RerollField, lang
   if (field === 'relationship') {
     const rv = pickBothFlat(RELATION_VERBS,   RELATION_VERBS_EN)
     const rt = pickBothFlat(RELATION_TARGETS, RELATION_TARGETS_EN)
-    next.relationship = lang === 'en' ? `${rv.en} ${rt.en}` : `${rv.da} ${rt.da}`
-    newTr.da.relationship = `${rv.da} ${rt.da}`
-    newTr.en.relationship = `${rv.en} ${rt.en}`
+    next.relationship = lang === 'en' ? '${rv.en} ${rt.en}' : '${rv.da} ${rt.da}'
+    newTr.da.relationship = '${rv.da} ${rt.da}'
+    newTr.en.relationship = '${rv.en} ${rt.en}'
   }
   if (field === 'sceneHook') {
     const p = pickBothFlat(SCENE_HOOKS, SCENE_HOOKS_EN)
@@ -927,7 +983,7 @@ export function setCharacterLevel(character: Character, level: number): Characte
   const safeLevel = Math.max(1, Math.min(20, Math.round(level)))
   // Rebuild prompts with the new level so portrait tier descriptors update too
   const updatedChar = { ...character, level: safeLevel, combatStats: generateCombatStats(internalClass(character.characterClass), safeLevel, character.abilityScores) }
-  return refreshPrompts({ ...updatedChar, id: `${character.id}_level_${safeLevel}_${Date.now()}` })
+  return refreshPrompts({ ...updatedChar, id: '${character.id}_level_${safeLevel}_${Date.now()}' })
 }
 
 export function rerollCombat(character: Character): Character {
@@ -941,7 +997,7 @@ export function rerollCombat(character: Character): Character {
   }
   return {
     ...character,
-    id: `${character.id}_combat_${Date.now()}`,
+    id: '${character.id}_combat_${Date.now()}',
     abilityScores,
     combatStats: generateCombatStats(internalClass(character.characterClass), character.level, abilityScores),
   }
@@ -1042,7 +1098,7 @@ export function generateCharacter(lang: Lang = 'da'): Character {
   const imagePrompt = generateImagePrompt({
     name, species: speciesInternal, characterClass: characterClassInternal,
     background: backgroundInternal, alignment: alignmentInternal,
-    appearance: `${promptLayer.perchancePrompt}`, inventoryItem, artStyle,
+    appearance: '${promptLayer.perchancePrompt}', inventoryItem, artStyle,
     gender, // START GENDER CONSISTENCY SYSTEM
   })
 
@@ -1066,19 +1122,19 @@ export function generateCharacter(lang: Lang = 'da'): Character {
       inventoryItem: inventoryItemDa,
       appearance,               // always stored in DA (internal)
       ...npcLayer.npcTranslations.da,
-    },
+    } as CharacterTranslations['da'],
     en: {
       species: speciesEn, characterClass: classEn, background: bgEn, alignment: alEn,
       personalityTrait: ptPair.en, ideal: idPair.en, bond: bdPair.en, flaw: flPair.en,
       inventoryItem: inventoryItemEn,
       appearance: appearanceEnDisplay,   // EN translation of the DA appearance string
       ...npcLayer.npcTranslations.en,
-    },
+    } as CharacterTranslations['en'],
   }
   // END INSTANT LANGUAGE SWITCH
 
   return {
-    id: `char_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+    id: 'char_${Date.now()}_${Math.random().toString(36).slice(2, 7)}',
     name,
     species,
     characterClass,

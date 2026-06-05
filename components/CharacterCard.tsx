@@ -8,7 +8,7 @@ import PortraitPanel from './PortraitPanel'
 import type { Character } from '@/lib/types'
 import type { RerollField } from '@/lib/generator'
 import { t, type Lang } from '@/lib/i18n'
-import { translateAppearanceToEn } from '@/lib/generator'
+import { translateAppearanceToEn, translateWeaponToEn } from '@/lib/generator'
 
 // Translation helper (mirrors CharacterSheet's tr)
 function tr(char: Character, lang: Lang, field: keyof NonNullable<Character['translations']>['da']): string {
@@ -116,22 +116,28 @@ function SmallReroll({ onClick, title = 'Reroll' }: { onClick?: () => void; titl
 }
 
 // ─── Colour palette ──────────────────────────────────────────────────────────
-// accent   = golden parchment  (Combat Data sidebar)
-// stat     = violet amethyst   (Race / Class / Alignment / Level)
-// left     = rose burgundy     (Trait column: Personlighedstræk/Ideal/Bånd/Fejl + SceneHook)
-// right    = indigo slate      (NPC column: Motivation/Hemmelighed/Særkende/Relation)
-// impression = deep teal       (Første Indtryk — stands alone)
+// accent     = golden parchment  (Combat Data)
+// stat       = violet amethyst   (Race / Class / Alignment / Level)
+// appearance = forest green      (Appearance — unique, stands alone)
+// impression = deep teal         (Første Indtryk — unique, stands alone)
+// traits     = deep purple       (Personality Trait / Ideal / Bond / Flaw — personality group)
+// story      = ocean blue        (Motivation / Secret / Mannerism / Relation — story group)
+// hook       = deep crimson      (Scene Hook — unique, highest GM priority)
+// howtoplay  = dark bronze       (How To Play — GM guidance strip)
 const CARD_THEMES = {
-  accent:     { bg: 'linear-gradient(145deg,#d9bd84,#b98745)',                                border: 'rgba(63,38,12,0.65)',    title: '#2a1304', divider: 'rgba(48,20,5,0.28)',      text: { color: '#211006', fontSize: 'clamp(0.78rem,1.34vw,0.92rem)', lineHeight: 1.34, fontWeight: 600 } as React.CSSProperties },
-  stat:       { bg: 'linear-gradient(145deg,rgba(38,14,58,0.62),rgba(14,6,22,0.95))',         border: 'rgba(150,90,210,0.48)',  title: '#b07ee0', divider: 'rgba(150,90,210,0.25)',   text: { color: '#e4d4f8', fontSize: 'clamp(0.86rem,1.55vw,1.02rem)', lineHeight: 1.42, fontWeight: 700 } as React.CSSProperties },
-  left:       { bg: 'linear-gradient(145deg,rgba(60,8,28,0.55),rgba(18,4,10,0.94))',          border: 'rgba(190,70,110,0.52)',  title: '#d97a9e', divider: 'rgba(190,70,110,0.30)',   text: { color: '#f2d8e4', fontSize: 'clamp(0.86rem,1.55vw,1.02rem)', lineHeight: 1.42 } as React.CSSProperties },
-  right:      { bg: 'linear-gradient(145deg,rgba(14,18,30,0.95),rgba(8,11,20,0.95))',         border: 'rgba(70,100,160,0.28)',  title: '#7aa8d8', divider: 'rgba(70,100,160,0.18)',   text: { color: '#c8d8ee', fontSize: 'clamp(0.86rem,1.55vw,1.02rem)', lineHeight: 1.42 } as React.CSSProperties },
-  impression: { bg: 'linear-gradient(145deg,rgba(8,26,24,0.97),rgba(4,14,12,0.97))',          border: 'rgba(60,140,120,0.32)',  title: '#5ec4aa', divider: 'rgba(60,140,120,0.18)',   text: { color: '#c2e8e0', fontStyle: 'italic', fontSize: 'clamp(0.92rem,1.62vw,1.08rem)', lineHeight: 1.45 } as React.CSSProperties },
+  accent:     { bg: 'linear-gradient(145deg,#d9bd84,#b98745)',                                  border: 'rgba(63,38,12,0.65)',     title: '#2a1304', divider: 'rgba(48,20,5,0.28)',       text: { color: '#211006', fontSize: 'clamp(0.78rem,1.34vw,0.92rem)', lineHeight: 1.34, fontWeight: 600 } as React.CSSProperties },
+  stat:       { bg: 'linear-gradient(145deg,rgba(38,14,58,0.62),rgba(14,6,22,0.95))',           border: 'rgba(150,90,210,0.48)',   title: '#b07ee0', divider: 'rgba(150,90,210,0.25)',    text: { color: '#e4d4f8', fontSize: 'clamp(0.86rem,1.55vw,1.02rem)', lineHeight: 1.42, fontWeight: 700 } as React.CSSProperties },
+  appearance: { bg: 'linear-gradient(145deg,rgba(6,24,8,0.97),rgba(4,14,5,0.97))',              border: 'rgba(50,160,70,0.48)',    title: '#5ec870', divider: 'rgba(50,160,70,0.22)',     text: { color: '#c8f0d0', fontSize: 'clamp(0.78rem,1.25vw,0.9rem)', lineHeight: 1.35 } as React.CSSProperties },
+  impression: { bg: 'linear-gradient(145deg,rgba(8,26,24,0.97),rgba(4,14,12,0.97))',            border: 'rgba(60,140,120,0.40)',   title: '#5ec4aa', divider: 'rgba(60,140,120,0.22)',    text: { color: '#c2e8e0', fontStyle: 'italic', fontSize: 'clamp(0.92rem,1.62vw,1.08rem)', lineHeight: 1.45 } as React.CSSProperties },
+  traits:     { bg: 'linear-gradient(145deg,rgba(28,8,50,0.62),rgba(12,4,22,0.97))',            border: 'rgba(130,60,210,0.50)',   title: '#a87ee8', divider: 'rgba(130,60,210,0.25)',    text: { color: '#e0d0f8', fontSize: 'clamp(0.86rem,1.55vw,1.02rem)', lineHeight: 1.42 } as React.CSSProperties },
+  story:      { bg: 'linear-gradient(145deg,rgba(6,16,38,0.65),rgba(4,10,24,0.97))',            border: 'rgba(50,110,210,0.50)',   title: '#6a9de8', divider: 'rgba(50,110,210,0.22)',    text: { color: '#c8d8f8', fontSize: 'clamp(0.86rem,1.55vw,1.02rem)', lineHeight: 1.42 } as React.CSSProperties },
+  hook:       { bg: 'linear-gradient(145deg,rgba(40,4,4,0.70),rgba(18,2,2,0.97))',              border: 'rgba(190,30,30,0.60)',    title: '#e05050', divider: 'rgba(190,30,30,0.28)',     text: { color: '#f8d0d0', fontSize: 'clamp(0.86rem,1.55vw,1.02rem)', lineHeight: 1.42, fontWeight: 700 } as React.CSSProperties },
+  howtoplay:  { bg: 'linear-gradient(145deg,rgba(30,18,4,0.80),rgba(14,8,2,0.97))',             border: 'rgba(160,110,30,0.45)',   title: '#c8921e', divider: 'rgba(160,110,30,0.22)',    text: { color: '#f0ddb0', fontStyle: 'italic', fontSize: 'clamp(0.86rem,1.55vw,1.02rem)', lineHeight: 1.42 } as React.CSSProperties },
 }
 
-type CardVariant = 'left' | 'right' | 'accent' | 'impression' | 'stat'
+type CardVariant = 'accent' | 'stat' | 'appearance' | 'impression' | 'traits' | 'story' | 'hook' | 'howtoplay'
 
-function InfoCard({ title, children, onReroll, variant = 'left' }: { title: string; children: React.ReactNode; onReroll?: () => void; variant?: CardVariant }) {
+function InfoCard({ title, children, onReroll, variant = 'traits' }: { title: string; children: React.ReactNode; onReroll?: () => void; variant?: CardVariant }) {
   const theme = CARD_THEMES[variant]
   return (
     <section style={{
@@ -139,9 +145,7 @@ function InfoCard({ title, children, onReroll, variant = 'left' }: { title: stri
       padding: variant === 'accent' ? '12px 13px' : '10px 12px',
       border: `1px solid ${theme.border}`,
       background: theme.bg,
-      boxShadow: variant === 'left'
-        ? 'inset 0 0 22px rgba(0,0,0,0.45), inset 0 0 40px rgba(160,30,70,0.12), 0 3px 12px rgba(0,0,0,0.28)'
-        : 'inset 0 0 18px rgba(0,0,0,0.38), 0 3px 12px rgba(0,0,0,0.24)',
+      boxShadow: 'inset 0 0 20px rgba(0,0,0,0.42), 0 3px 12px rgba(0,0,0,0.24)',
       minWidth: 0, overflow: 'hidden',
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
@@ -207,7 +211,7 @@ function DesktopRedesign({ character, imageUrl, isGenerating, isLoadingImage, im
               <PortraitPanel key={imageUrl ?? 'empty'} {...portraitProps} />
             </div>
           </div>
-          <InfoCard title={t(lang, 'appearance')} variant="stat" onReroll={() => onRerollField('appearance')}>
+          <InfoCard title={t(lang, 'appearance')} variant="appearance" onReroll={() => onRerollField('appearance')}>
             <span style={{ fontSize: 'clamp(0.78rem,1.25vw,0.9rem)', lineHeight: 1.35 }}>{trAppearance(character, lang)}</span>
           </InfoCard>
           <InfoCard title={t(lang, 'combatData')} variant="accent">
@@ -252,11 +256,11 @@ function DesktopRedesign({ character, imageUrl, isGenerating, isLoadingImage, im
                 )
               })}
             </div>
-            {/* Weapons at bottom — name first, stats below */}
+            {/* Weapons at bottom — name first, stats below; weapon names translated by lang */}
             <div style={{ borderTop: '1px solid rgba(44,20,5,0.30)', paddingTop: 7, display: 'flex', flexDirection: 'column', gap: 6 }}>
               {[
-                { label: 'M', kind: 'Melee', name: c.melee.name, toHit: c.melee.toHit, damage: c.melee.damage },
-                { label: 'R', kind: 'Range', name: c.ranged.name, toHit: c.ranged.toHit, damage: c.ranged.damage },
+                { label: 'M', kind: lang === 'en' ? 'Melee' : 'Nærkamp', name: lang === 'en' ? translateWeaponToEn(c.melee.name) : c.melee.name, toHit: c.melee.toHit, damage: c.melee.damage },
+                { label: 'R', kind: lang === 'en' ? 'Range'  : 'Distance', name: lang === 'en' ? translateWeaponToEn(c.ranged.name) : c.ranged.name, toHit: c.ranged.toHit, damage: c.ranged.damage },
               ].map(({ label, kind, name, toHit, damage }) => (
                 <div key={kind} style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '1px 7px' }}>
                   <div style={{
@@ -272,6 +276,19 @@ function DesktopRedesign({ character, imageUrl, isGenerating, isLoadingImage, im
                 </div>
               ))}
             </div>
+            {/* Special ability — 1 class-specific ability for flavour */}
+            {(() => {
+              const abilities = lang === 'en' ? c.specialAbilitiesEn : c.specialAbilities
+              const ability = abilities?.[0]
+              if (!ability) return null
+              const [abilityName, ...rest] = ability.split(':')
+              return (
+                <div style={{ borderTop: '1px solid rgba(44,20,5,0.22)', paddingTop: 5, marginTop: 2 }}>
+                  <span style={{ fontWeight: 800, color: '#3a1f08', fontSize: '0.62rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{abilityName}</span>
+                  {rest.length > 0 && <span style={{ color: 'rgba(42,19,4,0.72)', fontSize: '0.60rem', lineHeight: 1.25, display: 'block', marginTop: 1 }}>{rest.join(':').trim()}</span>}
+                </div>
+              )
+            })()}
           </InfoCard>
         </aside>
 
@@ -287,23 +304,28 @@ function DesktopRedesign({ character, imageUrl, isGenerating, isLoadingImage, im
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 3px 1fr', gap: '0 8px', minHeight: 0, overflow: 'hidden' }}>
             <div style={{ display: 'grid', gridTemplateRows: 'repeat(4,1fr)', gap: 8, minHeight: 0 }}>
-              <InfoCard title={t(lang, 'personalityTrait')} onReroll={() => onRerollField('personalityTrait')}>{tr(character, lang, 'personalityTrait')}</InfoCard>
-              <InfoCard title={t(lang, 'ideal')} onReroll={() => onRerollField('ideal')}>{tr(character, lang, 'ideal')}</InfoCard>
-              <InfoCard title={t(lang, 'bond')} onReroll={() => onRerollField('bond')}>{tr(character, lang, 'bond')}</InfoCard>
-              <InfoCard title={t(lang, 'flaw')} onReroll={() => onRerollField('flaw')}>{tr(character, lang, 'flaw')}</InfoCard>
+              <InfoCard variant="traits" title={t(lang, 'personalityTrait')} onReroll={() => onRerollField('personalityTrait')}>{tr(character, lang, 'personalityTrait')}</InfoCard>
+              <InfoCard variant="traits" title={t(lang, 'ideal')} onReroll={() => onRerollField('ideal')}>{tr(character, lang, 'ideal')}</InfoCard>
+              <InfoCard variant="traits" title={t(lang, 'bond')} onReroll={() => onRerollField('bond')}>{tr(character, lang, 'bond')}</InfoCard>
+              <InfoCard variant="traits" title={t(lang, 'flaw')} onReroll={() => onRerollField('flaw')}>{tr(character, lang, 'flaw')}</InfoCard>
             </div>
             {/* vertical divider */}
-            <div style={{ background: 'linear-gradient(to bottom, transparent, rgba(80,110,160,0.35) 20%, rgba(80,110,160,0.35) 80%, transparent)', borderRadius: 2 }} />
+            <div style={{ background: 'linear-gradient(to bottom, transparent, rgba(100,60,180,0.30) 20%, rgba(50,100,200,0.30) 80%, transparent)', borderRadius: 2 }} />
             <div style={{ display: 'grid', gridTemplateRows: 'repeat(4,1fr)', gap: 8, minHeight: 0 }}>
-              <InfoCard variant="right" title={t(lang, 'motivation')} onReroll={() => onRerollField('motivation')}>{tr(character, lang, 'motivation')}</InfoCard>
-              <InfoCard variant="right" title={t(lang, 'secret')} onReroll={() => onRerollField('secret')}>{tr(character, lang, 'secret')}</InfoCard>
-              <InfoCard variant="right" title={t(lang, 'mannerism')} onReroll={() => onRerollField('mannerism')}>{tr(character, lang, 'mannerism')}</InfoCard>
-              <InfoCard variant="right" title={t(lang, 'relation')} onReroll={() => onRerollField('relationship')}>{tr(character, lang, 'relationship')}</InfoCard>
+              <InfoCard variant="story" title={t(lang, 'motivation')} onReroll={() => onRerollField('motivation')}>{tr(character, lang, 'motivation')}</InfoCard>
+              <InfoCard variant="story" title={t(lang, 'secret')} onReroll={() => onRerollField('secret')}>{tr(character, lang, 'secret')}</InfoCard>
+              <InfoCard variant="story" title={t(lang, 'mannerism')} onReroll={() => onRerollField('mannerism')}>{tr(character, lang, 'mannerism')}</InfoCard>
+              <InfoCard variant="story" title={t(lang, 'relation')} onReroll={() => onRerollField('relationship')}>{tr(character, lang, 'relationship')}</InfoCard>
             </div>
           </div>
-          <InfoCard title={t(lang, 'sceneHook')} variant="left" onReroll={() => onRerollField('sceneHook')}>
+          <InfoCard variant="hook" title={t(lang, 'sceneHook')} onReroll={() => onRerollField('sceneHook')}>
             <strong>{tr(character, lang, 'sceneHook')}</strong>
           </InfoCard>
+          {character.howToPlay && (
+            <InfoCard variant="howtoplay" title={t(lang, 'howToPlay')}>
+              <em>{character.translations?.[lang]?.howToPlay ?? character.howToPlay}</em>
+            </InfoCard>
+          )}
         </section>
       </main>
 

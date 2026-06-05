@@ -166,6 +166,24 @@ export const RELATION_VERBS_EN = [
   'has stolen something precious from',
 ]
 
+export const HOW_TO_PLAY_EN = [
+  'Speak softly and never answer questions directly.',
+  'Laugh before delivering bad news.',
+  'Maintain eye contact for slightly too long.',
+  'Treat every stranger like a lifelong friend.',
+  'Pause before answering every question.',
+  'Never mention your past unless directly asked.',
+  'Always offer help, but always ask for something in return.',
+  'Change the subject exactly when the conversation gets too close to the truth.',
+  'Never use your own name — wait for others to say it first.',
+  'Speak quickly about small things and slowly about what truly matters.',
+  'Always sit with your back to the wall and eyes on the exit.',
+  'Make a joke before saying anything serious.',
+  'Refuse help — then accept it anyway.',
+  'Answer every difficult question with a question.',
+  'Correct minor details in what others say while ignoring the big truths.',
+]
+
 export const SCENE_HOOKS_EN = [
   'If the players help, they receive a name, a location, and a dangerous deadline.',
   'If they press too hard, the NPC shuts down completely and sends someone after them later.',

@@ -169,13 +169,31 @@ export const RELATION_VERBS = [
 
 export const SCENE_HOOKS = [
   'Hvis spillerne hjælper, får de et navn, et sted og en farlig tidsfrist.',
-  'Hvis de presser for hårdt, lukker NPC’en helt ned og sender nogen efter dem senere.',
-  'Et forkert spørgsmål får NPC’en til at tro, at spillerne allerede ved for meget.',
-  'NPC’en tilbyder hjælp, men beder om en lille tjeneste, der viser sig at være moralsk grumset.',
+  'Hvis de presser for hårdt, lukker NPC\'en helt ned og sender nogen efter dem senere.',
+  'Et forkert spørgsmål får NPC\'en til at tro, at spillerne allerede ved for meget.',
+  'NPC\'en tilbyder hjælp, men beder om en lille tjeneste, der viser sig at være moralsk grumset.',
   'En tredje part overvåger samtalen og reagerer, når spillerne forlader stedet.',
-  'NPC’en har brug for en hurtig beslutning, ikke en lang plan.',
+  'NPC\'en har brug for en hurtig beslutning, ikke en lang plan.',
   'Sandheden er nyttig, men den skader en uskyldig, hvis den bliver sagt højt.',
-  'NPC’en kan blive en stærk allieret, men kun hvis spillerne behandler dem som et menneske først.',
+  'NPC\'en kan blive en stærk allieret, men kun hvis spillerne behandler dem som et menneske først.',
+]
+
+export const HOW_TO_PLAY = [
+  'Tal aldrig direkte — lad spørgsmålet hænge i luften.',
+  'Grin altid en halv sekund for tidligt.',
+  'Hold øjenkontakt en anelse for længe.',
+  'Behandl alle fremmede som gamle venner.',
+  'Hold en pause inden hvert svar — uanset spørgsmålet.',
+  'Nævn aldrig din fortid, medmindre nogen konkret spørger.',
+  'Tilbyd altid hjælp, men bed altid om noget til gengæld.',
+  'Skift emne præcis når samtalen bliver for tæt på sandheden.',
+  'Brug aldrig dit eget navn — vent på at andre siger det.',
+  'Tal hurtigt om småting og langsomt om det der virkelig betyder noget.',
+  'Sid altid med ryggen mod væggen og øjnene mod udgangen.',
+  'Lav altid en vittighed, inden du siger noget alvorligt.',
+  'Afvis hjælp — og tag så imod den alligevel.',
+  'Svar altid med et spørgsmål, når du er under pres.',
+  'Ret på detaljer i andres udsagn, men ignorer de store sandheder.',
 ]
 
 export const PORTRAIT_PROMPT_NOTES = [
