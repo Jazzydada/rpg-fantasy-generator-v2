@@ -138,46 +138,46 @@ function PortraitPanel({ character, imageUrl, isLoadingImage, imageStartedAt, qu
         </div>
       )}
 
-      {/* START PORTRAIT ON DEMAND SYSTEM — placeholder */}
-      {/* Shown when a character exists but no portrait has been generated yet */}
-      {character && !imageUrl && !isLoadingImage && (
-        <div
-          className="absolute inset-0 flex flex-col items-center justify-center gap-4"
-          style={{ background: 'radial-gradient(ellipse at 50% 38%, rgba(22,14,5,1) 0%, rgba(6,4,2,1) 100%)' }}
-        >
-          {/* Decorative rune border */}
-          <div style={{
-            position: 'absolute', inset: 20,
-            border: '1px solid rgba(201,168,76,0.12)',
-            pointerEvents: 'none',
-          }} />
-          <div style={{
-            position: 'absolute', inset: 24,
-            border: '1px solid rgba(201,168,76,0.06)',
-            pointerEvents: 'none',
-          }} />
-          {/* Corner ornaments */}
-          {[['0','0','right','bottom'],['0','auto','right','auto'],['auto','0','auto','bottom'],['auto','auto','auto','auto']].map(([t,b,br,bb], i) => (
-            <div key={i} style={{
-              position: 'absolute', top: t === 'auto' ? 'auto' : 20, bottom: b === 'auto' ? 'auto' : 20,
-              right: br === 'auto' ? 'auto' : 20, left: br === 'right' ? 'auto' : (b === 'auto' ? 20 : 20),
-              width: 14, height: 14,
-              borderTop: (i < 2) ? '1px solid rgba(201,168,76,0.35)' : 'none',
-              borderBottom: (i >= 2) ? '1px solid rgba(201,168,76,0.35)' : 'none',
-              borderLeft: (i === 0 || i === 2) ? '1px solid rgba(201,168,76,0.35)' : 'none',
-              borderRight: (i === 1 || i === 3) ? '1px solid rgba(201,168,76,0.35)' : 'none',
-            }} />
-          ))}
-          {/* Central icon */}
-          <div style={{ color: 'rgba(201,168,76,0.18)', fontSize: '2.5rem', lineHeight: 1 }}>✦</div>
-          <div style={{ textAlign: 'center', padding: '0 24px' }}>
-            <p className="font-cinzel uppercase tracking-widest" style={{ fontSize: '0.55rem', color: 'rgba(201,168,76,0.3)', letterSpacing: '0.22em', marginBottom: 6 }}>
-              {character.name}
-            </p>
-            <p className="font-crimson italic" style={{ fontSize: '0.68rem', color: 'rgba(201,168,76,0.2)', lineHeight: 1.4 }}>
-              Klik &ldquo;Lav portræt&rdquo; for at generere et portræt
-            </p>
-          </div>
+      {/* START PORTRAIT ON DEMAND SYSTEM — silhouette placeholder */}
+      {/* Shown when no portrait exists yet, AND while loading (behind loading overlay) */}
+      {character && !imageUrl && (
+        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 50% 32%, rgba(18,10,3,1) 0%, rgba(5,3,2,1) 100%)' }}>
+          {/* Sigil rings */}
+          <svg viewBox="0 0 200 260" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.55 }} aria-hidden>
+            {/* Outer decorative rings */}
+            <circle cx="100" cy="145" r="88" fill="none" stroke="rgba(201,168,76,0.08)" strokeWidth="0.7"/>
+            <circle cx="100" cy="145" r="72" fill="none" stroke="rgba(201,168,76,0.06)" strokeWidth="0.5"/>
+            {/* Eight-pointed arcane sigil */}
+            <path d="M100 57 L104 82 L126 66 L111 86 L136 90 L111 94 L126 114 L104 98 L100 123 L96 98 L74 114 L89 94 L64 90 L89 86 L74 66 L96 82 Z"
+              fill="rgba(201,168,76,0.04)" stroke="rgba(201,168,76,0.12)" strokeWidth="0.6"/>
+            {/* Inner ring with rune marks */}
+            <circle cx="100" cy="90" r="50" fill="none" stroke="rgba(201,168,76,0.05)" strokeWidth="0.5"/>
+            {/* Silhouette — head */}
+            <ellipse cx="100" cy="68" rx="22" ry="23" fill="rgba(8,6,3,0.90)"/>
+            {/* Hood/hair hint */}
+            <path d="M78 58 C75 44 82 34 100 32 C118 34 125 44 122 58 C118 49 112 44 100 43 C88 44 82 49 78 58Z" fill="rgba(12,8,4,0.80)"/>
+            {/* Neck */}
+            <rect x="93" y="89" width="14" height="11" rx="2" fill="rgba(8,6,3,0.90)"/>
+            {/* Shoulders broad cloak */}
+            <path d="M26 128 C28 108 54 97 100 96 C146 97 172 108 174 128 L168 220 L32 220 Z" fill="rgba(8,6,3,0.82)"/>
+            {/* Pauldrons */}
+            <ellipse cx="34" cy="122" rx="20" ry="11" fill="rgba(6,4,2,0.88)"/>
+            <ellipse cx="166" cy="122" rx="20" ry="11" fill="rgba(6,4,2,0.88)"/>
+            {/* Cloak folds */}
+            <path d="M26 128 L14 220 L32 220" fill="rgba(6,4,2,0.65)"/>
+            <path d="M174 128 L186 220 L168 220" fill="rgba(6,4,2,0.65)"/>
+            {/* Belt/equipment hint */}
+            <rect x="68" y="168" width="64" height="5" rx="2" fill="rgba(12,8,4,0.60)"/>
+            {/* Subtle chest detail */}
+            <path d="M85 100 Q100 108 115 100" fill="none" stroke="rgba(201,168,76,0.06)" strokeWidth="0.8"/>
+            {/* Corner ornaments */}
+            <path d="M10 10 L10 26 M10 10 L26 10" stroke="rgba(201,168,76,0.28)" strokeWidth="0.8" fill="none"/>
+            <path d="M190 10 L190 26 M190 10 L174 10" stroke="rgba(201,168,76,0.28)" strokeWidth="0.8" fill="none"/>
+            <path d="M10 250 L10 234 M10 250 L26 250" stroke="rgba(201,168,76,0.28)" strokeWidth="0.8" fill="none"/>
+            <path d="M190 250 L190 234 M190 250 L174 250" stroke="rgba(201,168,76,0.28)" strokeWidth="0.8" fill="none"/>
+            {/* Name at bottom */}
+            <text x="100" y="242" textAnchor="middle" fontFamily="serif" fontSize="7" letterSpacing="2" fill="rgba(201,168,76,0.25)">{character.name.toUpperCase()}</text>
+          </svg>
         </div>
       )}
       {/* END PORTRAIT ON DEMAND SYSTEM */}
@@ -202,7 +202,7 @@ function PortraitPanel({ character, imageUrl, isLoadingImage, imageStartedAt, qu
             key="loading"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="absolute inset-0 flex flex-col items-center justify-center gap-5"
-            style={{ background: '#0a0806', zIndex: 5 }}
+            style={{ background: 'rgba(5,3,2,0.82)', zIndex: 5 }}
           >
             <div className="relative w-28 h-28">
               {LOADING_RUNES.map((rune, i) => {

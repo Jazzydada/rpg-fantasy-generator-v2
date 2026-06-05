@@ -116,33 +116,46 @@ function SmallReroll({ onClick, title = 'Reroll' }: { onClick?: () => void; titl
 }
 
 // ─── Colour palette ──────────────────────────────────────────────────────────
-// accent     = golden parchment  (Combat Data)
-// stat       = violet amethyst   (Race / Class / Alignment / Level)
-// appearance = forest green      (Appearance — unique, stands alone)
-// impression = deep teal         (Første Indtryk — unique, stands alone)
-// traits     = deep purple       (Personality Trait / Ideal / Bond / Flaw — personality group)
-// story      = ocean blue        (Motivation / Secret / Mannerism / Relation — story group)
-// hook       = deep crimson      (Scene Hook — unique, highest GM priority)
-// howtoplay  = dark bronze       (How To Play — GM guidance strip)
+// Each GM-facing category has its own identity. Colours are restrained and
+// readable — saturated enough to distinguish at a glance, dark enough to fit
+// the fantasy aesthetic.
+const T = (bg: string, border: string, title: string, divider: string, text: React.CSSProperties) =>
+  ({ bg, border, title, divider, text })
+
 const CARD_THEMES = {
-  accent:     { bg: 'linear-gradient(145deg,#d9bd84,#b98745)',                                  border: 'rgba(63,38,12,0.65)',     title: '#2a1304', divider: 'rgba(48,20,5,0.28)',       text: { color: '#211006', fontSize: 'clamp(0.78rem,1.34vw,0.92rem)', lineHeight: 1.34, fontWeight: 600 } as React.CSSProperties },
-  stat:       { bg: 'linear-gradient(145deg,rgba(38,14,58,0.62),rgba(14,6,22,0.95))',           border: 'rgba(150,90,210,0.48)',   title: '#b07ee0', divider: 'rgba(150,90,210,0.25)',    text: { color: '#e4d4f8', fontSize: 'clamp(0.72rem,1.1vw,0.88rem)', lineHeight: 1.3, fontWeight: 700, wordBreak: 'break-word' } as React.CSSProperties },
-  appearance: { bg: 'linear-gradient(145deg,rgba(6,24,8,0.97),rgba(4,14,5,0.97))',              border: 'rgba(50,160,70,0.48)',    title: '#5ec870', divider: 'rgba(50,160,70,0.22)',     text: { color: '#c8f0d0', fontSize: 'clamp(0.78rem,1.25vw,0.9rem)', lineHeight: 1.35 } as React.CSSProperties },
-  impression: { bg: 'linear-gradient(145deg,rgba(8,26,24,0.97),rgba(4,14,12,0.97))',            border: 'rgba(60,140,120,0.40)',   title: '#5ec4aa', divider: 'rgba(60,140,120,0.22)',    text: { color: '#c2e8e0', fontStyle: 'italic', fontSize: 'clamp(0.92rem,1.62vw,1.08rem)', lineHeight: 1.45 } as React.CSSProperties },
-  traits:     { bg: 'linear-gradient(145deg,rgba(28,8,50,0.62),rgba(12,4,22,0.97))',            border: 'rgba(130,60,210,0.50)',   title: '#a87ee8', divider: 'rgba(130,60,210,0.25)',    text: { color: '#e0d0f8', fontSize: 'clamp(0.86rem,1.55vw,1.02rem)', lineHeight: 1.42 } as React.CSSProperties },
-  story:      { bg: 'linear-gradient(145deg,rgba(6,16,38,0.65),rgba(4,10,24,0.97))',            border: 'rgba(50,110,210,0.50)',   title: '#6a9de8', divider: 'rgba(50,110,210,0.22)',    text: { color: '#c8d8f8', fontSize: 'clamp(0.86rem,1.55vw,1.02rem)', lineHeight: 1.42 } as React.CSSProperties },
-  hook:       { bg: 'linear-gradient(145deg,rgba(40,4,4,0.70),rgba(18,2,2,0.97))',              border: 'rgba(190,30,30,0.60)',    title: '#e05050', divider: 'rgba(190,30,30,0.28)',     text: { color: '#f8d0d0', fontSize: 'clamp(0.86rem,1.55vw,1.02rem)', lineHeight: 1.42, fontWeight: 700 } as React.CSSProperties },
-  howtoplay:  { bg: 'linear-gradient(145deg,rgba(30,18,4,0.80),rgba(14,8,2,0.97))',             border: 'rgba(160,110,30,0.45)',   title: '#c8921e', divider: 'rgba(160,110,30,0.22)',    text: { color: '#f0ddb0', fontStyle: 'italic', fontSize: 'clamp(0.86rem,1.55vw,1.02rem)', lineHeight: 1.42 } as React.CSSProperties },
+  // UI / structural
+  accent:      T('linear-gradient(145deg,#d9bd84,#b98745)',                             'rgba(63,38,12,0.65)',   '#2a1304', 'rgba(48,20,5,0.28)',    { color: '#211006', fontSize: 'clamp(0.78rem,1.34vw,0.92rem)', lineHeight: 1.34, fontWeight: 600 } as React.CSSProperties),
+  stat:        T('linear-gradient(145deg,rgba(34,12,56,0.70),rgba(12,4,20,0.96))',      'rgba(140,80,210,0.45)', '#a870e0', 'rgba(140,80,210,0.22)', { color: '#e0d0f8', fontSize: 'clamp(0.72rem,1.1vw,0.88rem)', lineHeight: 1.3, fontWeight: 700, wordBreak: 'break-word' } as React.CSSProperties),
+
+  // Standalone top fields
+  impression:  T('linear-gradient(145deg,rgba(4,28,30,0.97),rgba(2,14,16,0.97))',       'rgba(30,180,190,0.45)', '#30d8e0', 'rgba(30,180,190,0.20)', { color: '#b8f0f4', fontStyle: 'italic', fontSize: 'clamp(0.9rem,1.58vw,1.05rem)', lineHeight: 1.46 } as React.CSSProperties),
+  appearance:  T('linear-gradient(145deg,rgba(4,22,6,0.97),rgba(2,12,3,0.97))',         'rgba(40,170,60,0.48)',  '#46d460', 'rgba(40,170,60,0.20)',  { color: '#c0f0c8', fontSize: 'clamp(0.78rem,1.22vw,0.9rem)', lineHeight: 1.36 } as React.CSSProperties),
+
+  // Personality group (left column)
+  personality: T('linear-gradient(145deg,rgba(30,8,52,0.68),rgba(12,3,22,0.97))',       'rgba(130,55,215,0.52)', '#a868e8', 'rgba(130,55,215,0.24)', { color: '#ddd0f8', fontSize: 'clamp(0.86rem,1.52vw,1.0rem)', lineHeight: 1.44 } as React.CSSProperties),
+  ideal:       T('linear-gradient(145deg,rgba(30,8,52,0.68),rgba(12,3,22,0.97))',       'rgba(130,55,215,0.52)', '#a868e8', 'rgba(130,55,215,0.24)', { color: '#ddd0f8', fontSize: 'clamp(0.86rem,1.52vw,1.0rem)', lineHeight: 1.44 } as React.CSSProperties),
+  bond:        T('linear-gradient(145deg,rgba(18,8,48,0.70),rgba(8,3,26,0.97))',        'rgba(100,80,210,0.50)', '#8878d8', 'rgba(100,80,210,0.22)', { color: '#d4d0f8', fontSize: 'clamp(0.86rem,1.52vw,1.0rem)', lineHeight: 1.44 } as React.CSSProperties),
+  flaw:        T('linear-gradient(145deg,rgba(44,4,8,0.72),rgba(20,2,4,0.97))',         'rgba(200,40,55,0.52)',  '#d84050', 'rgba(200,40,55,0.24)',  { color: '#f8c8cc', fontSize: 'clamp(0.86rem,1.52vw,1.0rem)', lineHeight: 1.44 } as React.CSSProperties),
+
+  // Story group (right column)
+  motivation:  T('linear-gradient(145deg,rgba(4,14,40,0.72),rgba(2,8,24,0.97))',        'rgba(50,110,210,0.50)', '#5a94e0', 'rgba(50,110,210,0.22)', { color: '#c8d8f8', fontSize: 'clamp(0.86rem,1.52vw,1.0rem)', lineHeight: 1.44 } as React.CSSProperties),
+  secret:      T('linear-gradient(145deg,rgba(36,4,4,0.72),rgba(16,2,2,0.97))',         'rgba(170,30,30,0.52)',  '#c83838', 'rgba(170,30,30,0.24)',  { color: '#f4c4c4', fontSize: 'clamp(0.86rem,1.52vw,1.0rem)', lineHeight: 1.44 } as React.CSSProperties),
+  mannerism:   T('linear-gradient(145deg,rgba(36,16,2,0.72),rgba(18,8,2,0.97))',        'rgba(200,120,20,0.52)', '#e09030', 'rgba(200,120,20,0.24)', { color: '#f4dca8', fontSize: 'clamp(0.86rem,1.52vw,1.0rem)', lineHeight: 1.44 } as React.CSSProperties),
+  relation:    T('linear-gradient(145deg,rgba(36,24,2,0.72),rgba(18,12,2,0.97))',       'rgba(200,160,20,0.52)', '#d4a820', 'rgba(200,160,20,0.24)', { color: '#f4e4a8', fontSize: 'clamp(0.86rem,1.52vw,1.0rem)', lineHeight: 1.44 } as React.CSSProperties),
+
+  // Footer
+  hook:        T('linear-gradient(145deg,rgba(40,4,4,0.80),rgba(18,2,2,0.98))',         'rgba(190,28,28,0.62)',  '#e04848', 'rgba(190,28,28,0.28)',  { color: '#f8cccc', fontSize: 'clamp(0.88rem,1.56vw,1.04rem)', lineHeight: 1.44, fontWeight: 700 } as React.CSSProperties),
+  howtoplay:   T('linear-gradient(145deg,rgba(28,16,2,0.82),rgba(14,8,2,0.98))',        'rgba(158,108,24,0.48)', '#c89020', 'rgba(158,108,24,0.22)', { color: '#f0dcaa', fontStyle: 'italic', fontSize: 'clamp(0.86rem,1.52vw,1.0rem)', lineHeight: 1.44 } as React.CSSProperties),
 }
 
-type CardVariant = 'accent' | 'stat' | 'appearance' | 'impression' | 'traits' | 'story' | 'hook' | 'howtoplay'
+type CardVariant = keyof typeof CARD_THEMES
 
-function InfoCard({ title, children, onReroll, variant = 'traits' }: { title: string; children: React.ReactNode; onReroll?: () => void; variant?: CardVariant }) {
+function InfoCard({ title, children, onReroll, variant = 'personality' }: { title: string; children: React.ReactNode; onReroll?: () => void; variant?: CardVariant }) {
   const theme = CARD_THEMES[variant]
   return (
     <section style={{
       position: 'relative',
-      padding: variant === 'accent' ? '12px 13px' : '10px 12px',
+      padding: variant === 'accent' ? '14px 14px' : '10px 12px',
       border: `1px solid ${theme.border}`,
       background: theme.bg,
       boxShadow: 'inset 0 0 20px rgba(0,0,0,0.42), 0 3px 12px rgba(0,0,0,0.24)',
@@ -197,8 +210,8 @@ function DesktopRedesign({ character, imageUrl, isGenerating, isLoadingImage, im
 
       <header style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: '1fr auto', gap: 12, alignItems: 'start', borderBottom: '1px solid rgba(201,168,76,0.22)', paddingBottom: 10 }}>
         <div>
-          <h1 className="font-cinzel-decorative uppercase" style={{ margin: 0, color: '#f0dfb4', fontSize: 'clamp(1.55rem, 3.7vw, 2.25rem)', lineHeight: 0.96, letterSpacing: '0.035em', textShadow: '0 2px 16px rgba(0,0,0,0.85)' }}>{character.name}</h1>
-          <p className="font-cinzel" style={{ margin: '7px 0 0', color: '#caa85a', fontSize: 'clamp(0.72rem,1.25vw,0.86rem)', letterSpacing: '0.11em' }}>{tr(character, lang, 'species')} · {tr(character, lang, 'characterClass')} · {t(lang, 'level')} {character.level}</p>
+          <h1 className="font-cinzel-decorative uppercase" style={{ margin: 0, color: '#f0dfb4', fontSize: 'clamp(1.35rem, 3.2vw, 1.95rem)', lineHeight: 0.98, letterSpacing: '0.035em', textShadow: '0 2px 16px rgba(0,0,0,0.85)' }}>{character.name}</h1>
+          <p className="font-cinzel" style={{ margin: '8px 0 0', color: '#caa85a', fontSize: 'clamp(0.76rem,1.32vw,0.92rem)', letterSpacing: '0.10em' }}>{tr(character, lang, 'species')} · {tr(character, lang, 'characterClass')} · {t(lang, 'level')} {character.level}</p>
         </div>
         <SmallReroll onClick={onRerollName} title="Rul navn om" />
       </header>
@@ -215,48 +228,48 @@ function DesktopRedesign({ character, imageUrl, isGenerating, isLoadingImage, im
           </InfoCard>
           <InfoCard title={t(lang, 'combatData')} variant="accent">
             {/* Top stats: AC · HP · Init */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 5, marginBottom: 6 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 7, marginBottom: 8 }}>
               {([
-                { label: 'AC',   value: c.armorClass,       color: '#4a7fa5', bg: 'rgba(30,60,90,0.28)' },
-                { label: 'HP',   value: c.hitPoints,        color: '#a05050', bg: 'rgba(90,25,25,0.28)' },
+                { label: 'AC',   value: c.armorClass,       color: '#5a9fc8', bg: 'rgba(20,50,80,0.38)' },
+                { label: 'HP',   value: c.hitPoints,        color: '#c06060', bg: 'rgba(90,20,20,0.38)' },
                 { label: 'Init', value: (() => { const n = parseInt(String(c.initiative).replace(/[^-\d]/g,'')); return (n >= 0 ? '+' : '') + n })(), color: '#e8d5a0', bg: 'rgba(60,45,10,0.55)' },
               ] as const).map(({ label, value, color, bg }) => (
-                <div key={label} style={{ textAlign: 'center', borderRadius: 4, border: `1px solid ${color}55`, background: bg, padding: '4px 2px' }}>
-                  <div style={{ fontSize: '0.46rem', letterSpacing: '0.1em', color, textTransform: 'uppercase', fontWeight: 700 }}>{label}</div>
-                  <div style={{ fontSize: '0.9rem', fontWeight: 800, color, lineHeight: 1.1 }}>{value}</div>
+                <div key={label} style={{ textAlign: 'center', borderRadius: 5, border: `1px solid ${color}66`, background: bg, padding: '6px 3px' }}>
+                  <div style={{ fontSize: '0.48rem', letterSpacing: '0.1em', color, textTransform: 'uppercase', fontWeight: 700 }}>{label}</div>
+                  <div style={{ fontSize: '1.0rem', fontWeight: 800, color, lineHeight: 1.1 }}>{value}</div>
                 </div>
               ))}
             </div>
             {/* Secondary stats: Speed · PP · CR */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 5, marginBottom: 8 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 6, marginBottom: 9 }}>
               {([
                 { label: 'Speed', value: c.speed },
                 { label: 'PP',    value: c.passivePerception },
                 { label: 'CR',    value: c.challenge },
               ] as const).map(({ label, value }) => (
-                <div key={label} style={{ textAlign: 'center', borderRadius: 3, border: '1px solid rgba(44,20,5,0.40)', background: 'rgba(0,0,0,0.18)', padding: '3px 2px' }}>
-                  <div style={{ fontSize: '0.44rem', letterSpacing: '0.09em', color: 'rgba(48,20,5,0.75)', textTransform: 'uppercase', fontWeight: 700 }}>{label}</div>
-                  <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#2a1304', lineHeight: 1.1 }}>{value}</div>
+                <div key={label} style={{ textAlign: 'center', borderRadius: 4, border: '1px solid rgba(44,20,5,0.45)', background: 'rgba(0,0,0,0.22)', padding: '4px 2px' }}>
+                  <div style={{ fontSize: '0.46rem', letterSpacing: '0.09em', color: 'rgba(48,20,5,0.80)', textTransform: 'uppercase', fontWeight: 700 }}>{label}</div>
+                  <div style={{ fontSize: '0.84rem', fontWeight: 700, color: '#2a1304', lineHeight: 1.1 }}>{value}</div>
                 </div>
               ))}
             </div>
             {/* Ability scores with modifier */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gap: 3, marginBottom: 8 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gap: 4, marginBottom: 10 }}>
               {abilityRows.map(([abbr, key]) => {
                 const score = abilities[key]
                 const mod = Math.floor((score - 10) / 2)
                 const modStr = (mod >= 0 ? '+' : '') + mod
                 return (
-                  <div key={abbr} style={{ textAlign: 'center', borderRadius: 3, border: '1px solid rgba(44,20,5,0.35)', background: 'rgba(0,0,0,0.15)', padding: '3px 1px' }}>
-                    <div style={{ fontSize: '0.44rem', letterSpacing: '0.06em', color: 'rgba(48,20,5,0.70)', textTransform: 'uppercase', fontWeight: 700 }}>{abbr}</div>
-                    <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#2a1304', lineHeight: 1 }}>{score}</div>
-                    <div style={{ fontSize: '0.48rem', color: mod >= 0 ? '#2a5c2a' : '#7a2020', fontWeight: 700 }}>{modStr}</div>
+                  <div key={abbr} style={{ textAlign: 'center', borderRadius: 4, border: '1px solid rgba(44,20,5,0.38)', background: 'rgba(0,0,0,0.18)', padding: '4px 1px' }}>
+                    <div style={{ fontSize: '0.46rem', letterSpacing: '0.06em', color: 'rgba(48,20,5,0.72)', textTransform: 'uppercase', fontWeight: 700 }}>{abbr}</div>
+                    <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#2a1304', lineHeight: 1 }}>{score}</div>
+                    <div style={{ fontSize: '0.50rem', color: mod >= 0 ? '#2a5c2a' : '#7a2020', fontWeight: 700 }}>{modStr}</div>
                   </div>
                 )
               })}
             </div>
             {/* Weapons at bottom — name first, stats below; weapon names translated by lang */}
-            <div style={{ borderTop: '1px solid rgba(44,20,5,0.30)', paddingTop: 7, display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div style={{ borderTop: '1px solid rgba(44,20,5,0.35)', paddingTop: 9, display: 'flex', flexDirection: 'column', gap: 8 }}>
               {[
                 { label: 'M', kind: lang === 'en' ? 'Melee' : 'Nærkamp', name: lang === 'en' ? translateWeaponToEn(c.melee.name) : c.melee.name, toHit: c.melee.toHit, damage: c.melee.damage },
                 { label: 'R', kind: lang === 'en' ? 'Range'  : 'Distance', name: lang === 'en' ? translateWeaponToEn(c.ranged.name) : c.ranged.name, toHit: c.ranged.toHit, damage: c.ranged.damage },
@@ -291,7 +304,7 @@ function DesktopRedesign({ character, imageUrl, isGenerating, isLoadingImage, im
           </InfoCard>
         </aside>
 
-        <section style={{ display: 'grid', gridTemplateRows: 'auto auto auto auto auto', gap: 10 }}>
+        <section style={{ display: 'grid', gridTemplateRows: 'auto auto 1fr', gap: 10 }}>
           <InfoCard title={t(lang, 'firstImpression')} variant="impression">
             {tr(character, lang, 'firstImpression')}
           </InfoCard>
@@ -303,32 +316,36 @@ function DesktopRedesign({ character, imageUrl, isGenerating, isLoadingImage, im
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 3px 1fr', gap: '0 8px' }}>
             <div style={{ display: 'grid', gap: 8, alignContent: 'start' }}>
-              <InfoCard variant="traits" title={t(lang, 'personalityTrait')} onReroll={() => onRerollField('personalityTrait')}>{tr(character, lang, 'personalityTrait')}</InfoCard>
-              <InfoCard variant="traits" title={t(lang, 'ideal')} onReroll={() => onRerollField('ideal')}>{tr(character, lang, 'ideal')}</InfoCard>
-              <InfoCard variant="traits" title={t(lang, 'bond')} onReroll={() => onRerollField('bond')}>{tr(character, lang, 'bond')}</InfoCard>
-              <InfoCard variant="traits" title={t(lang, 'flaw')} onReroll={() => onRerollField('flaw')}>{tr(character, lang, 'flaw')}</InfoCard>
+              <InfoCard variant="personality" title={t(lang, 'personalityTrait')} onReroll={() => onRerollField('personalityTrait')}>{tr(character, lang, 'personalityTrait')}</InfoCard>
+              <InfoCard variant="ideal"       title={t(lang, 'ideal')}            onReroll={() => onRerollField('ideal')}>{tr(character, lang, 'ideal')}</InfoCard>
+              <InfoCard variant="bond"        title={t(lang, 'bond')}             onReroll={() => onRerollField('bond')}>{tr(character, lang, 'bond')}</InfoCard>
+              <InfoCard variant="flaw"        title={t(lang, 'flaw')}             onReroll={() => onRerollField('flaw')}>{tr(character, lang, 'flaw')}</InfoCard>
             </div>
-            {/* vertical divider */}
-            <div style={{ background: 'linear-gradient(to bottom, transparent, rgba(100,60,180,0.30) 20%, rgba(50,100,200,0.30) 80%, transparent)', borderRadius: 2 }} />
+            {/* vertical divider — gradient blending purple → blue */}
+            <div style={{ background: 'linear-gradient(to bottom, transparent 5%, rgba(115,65,200,0.25) 25%, rgba(50,100,200,0.25) 75%, transparent 95%)', borderRadius: 2 }} />
             <div style={{ display: 'grid', gap: 8, alignContent: 'start' }}>
-              <InfoCard variant="story" title={t(lang, 'motivation')} onReroll={() => onRerollField('motivation')}>{tr(character, lang, 'motivation')}</InfoCard>
-              <InfoCard variant="story" title={t(lang, 'secret')} onReroll={() => onRerollField('secret')}>{tr(character, lang, 'secret')}</InfoCard>
-              <InfoCard variant="story" title={t(lang, 'mannerism')} onReroll={() => onRerollField('mannerism')}>{tr(character, lang, 'mannerism')}</InfoCard>
-              <InfoCard variant="story" title={t(lang, 'relation')} onReroll={() => onRerollField('relationship')}>{tr(character, lang, 'relationship')}</InfoCard>
+              <InfoCard variant="motivation" title={t(lang, 'motivation')} onReroll={() => onRerollField('motivation')}>{tr(character, lang, 'motivation')}</InfoCard>
+              <InfoCard variant="secret"     title={t(lang, 'secret')}     onReroll={() => onRerollField('secret')}>{tr(character, lang, 'secret')}</InfoCard>
+              <InfoCard variant="mannerism"  title={t(lang, 'mannerism')}  onReroll={() => onRerollField('mannerism')}>{tr(character, lang, 'mannerism')}</InfoCard>
+              <InfoCard variant="relation"   title={t(lang, 'relation')}   onReroll={() => onRerollField('relationship')}>{tr(character, lang, 'relationship')}</InfoCard>
             </div>
           </div>
-          <InfoCard variant="hook" title={t(lang, 'sceneHook')} onReroll={() => onRerollField('sceneHook')}>
-            <strong>{tr(character, lang, 'sceneHook')}</strong>
-          </InfoCard>
-          {character.howToPlay && (
-            <InfoCard variant="howtoplay" title={t(lang, 'howToPlay')}>
-              <em>{character.translations?.[lang]?.howToPlay ?? character.howToPlay}</em>
-            </InfoCard>
-          )}
         </section>
       </main>
 
-      <footer className="font-cinzel" style={{ position: 'relative', zIndex: 1, borderTop: '1px solid rgba(201,168,76,0.18)', paddingTop: 8, color: 'rgba(201,168,76,0.48)', letterSpacing: '0.16em', fontSize: '0.56rem', textAlign: 'center' }}>
+      {/* ── Full-width footer row: Scene Hook + How To Play ─────────────── */}
+      <div style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: character.howToPlay ? '1fr 1fr' : '1fr', gap: 10, marginTop: 2 }}>
+        <InfoCard variant="hook" title={t(lang, 'sceneHook')} onReroll={() => onRerollField('sceneHook')}>
+          <strong>{tr(character, lang, 'sceneHook')}</strong>
+        </InfoCard>
+        {character.howToPlay && (
+          <InfoCard variant="howtoplay" title={t(lang, 'howToPlay')}>
+            <em>{character.translations?.[lang]?.howToPlay ?? character.howToPlay}</em>
+          </InfoCard>
+        )}
+      </div>
+
+      <footer className="font-cinzel" style={{ position: 'relative', zIndex: 1, borderTop: '1px solid rgba(201,168,76,0.14)', marginTop: 4, paddingTop: 8, color: 'rgba(201,168,76,0.38)', letterSpacing: '0.18em', fontSize: '0.52rem', textAlign: 'center' }}>
         ASAHEIMS RPG FANTASY GENERATOR
       </footer>
     </div>
