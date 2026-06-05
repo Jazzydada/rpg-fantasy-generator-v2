@@ -98,16 +98,22 @@ function toPromptInput(char: Character): PromptInput {
 type ImageMode = 'auto' | 'perchance' | 'pollinations'
 type GeneratedPortrait = { url: string; provider: 'perchance' | 'pollinations'; fallbackReason?: string }
 
-// ─── Direct browser → Pollinations (bypasses Vercel IP / shared queue) ────────
-// When called from the user's browser, each visitor has their own IP address.
-// This means no shared rate-limit or queue — Pollinations treats each user
-// independently. Server-side calls from Vercel share a small pool of datacenter
-// IPs, which is why the queue builds up there.
+// ─── Direct browser → Pollinations with smart retry ──────────────────────────
+// Pollinations allows max 1 queued request per IP. When the user generates a
+// new character while a portrait is still generating, the new request gets 402
+// "queue full". We handle this by waiting and retrying instead of falling back
+// to the server route (which uses a shared Vercel IP that is far more limited).
 //
-// Model selection:
-//   fast  → "flux"         ≈ 6-10s, good quality
-//   high  → "flux-realism" ≈ 10-18s, cinematic quality
-// Both are free with no API key. CORS is enabled on Pollinations.
+// Model: "flux" ≈ 8-15s, free, no API key, CORS-enabled on Pollinations.
+
+function abortableDelay(ms: number, signal?: AbortSignal): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (signal?.aborted) return reject(new DOMException('Aborted', 'AbortError'))
+    const t = setTimeout(resolve, ms)
+    signal?.addEventListener('abort', () => { clearTimeout(t); reject(new DOMException('Aborted', 'AbortError')) }, { once: true })
+  })
+}
+
 async function fetchPollinationsDirect(
   prompt: string,
   quality: 'fast' | 'high',
@@ -118,31 +124,49 @@ async function fetchPollinationsDirect(
   const seed     = `${Date.now()}-${Math.floor(Math.random() * 1_000_000)}`
   const url      = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${w}&height=${h}&nologo=true&seed=${seed}&model=${model}&enhance=false&safe=true&cache=false`
 
-  const res = await fetch(url, { signal, headers: { 'Accept': 'image/*' } })
-  if (!res.ok) throw new Error(`Pollinations direct HTTP ${res.status}`)
-  const blob = await res.blob()
-  if (blob.size < 5000) throw new Error('Pollinations returned an empty image')
-  return URL.createObjectURL(blob)
+  const MAX_ATTEMPTS = 6
+  const RETRY_DELAY  = 9_000  // 9s — enough for the previous request to complete
+
+  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    if (signal?.aborted) throw new DOMException('Aborted', 'AbortError')
+
+    const res = await fetch(url, { signal, headers: { 'Accept': 'image/*' } })
+
+    if (res.ok) {
+      const blob = await res.blob()
+      if (blob.size < 5000) throw new Error('Pollinations returned an empty image')
+      return URL.createObjectURL(blob)
+    }
+
+    if (res.status === 402) {
+      // Queue full — wait and retry. Do NOT fall back to server (server IP is worse).
+      console.log(`[portrait] Pollinations queue full (attempt ${attempt + 1}/${MAX_ATTEMPTS}), retrying in ${RETRY_DELAY / 1000}s`)
+      await abortableDelay(RETRY_DELAY, signal)
+      continue
+    }
+
+    throw new Error(`Pollinations HTTP ${res.status}`)
+  }
+
+  throw new Error('Pollinations: kø fuld — prøv igen om lidt')
 }
 
 async function fetchGeneratedImage(prompt: string, negativePrompt: string, provider: ImageMode, quality: 'fast' | 'high', imageStyle: string, portraitType: string, signal?: AbortSignal): Promise<GeneratedPortrait> {
-  // Try direct browser call first — faster, no shared queue
-  if (provider === 'auto' || provider === 'pollinations') {
-    try {
-      const url = await fetchPollinationsDirect(prompt, quality, signal)
-      return { url, provider: 'pollinations' }
-    } catch (err) {
-      // If aborted, rethrow — don't fall back
-      if (err instanceof Error && err.name === 'AbortError') throw err
-      console.warn('[portrait] Direct browser call failed, falling back to server route:', err)
-    }
+  // Always try direct browser call — avoids shared Vercel IP rate-limit
+  try {
+    const url = await fetchPollinationsDirect(prompt, quality, signal)
+    return { url, provider: 'pollinations' }
+  } catch (err) {
+    // Abort = user requested a new portrait — don't fall back, just stop
+    if (err instanceof Error && (err.name === 'AbortError' || err.message.includes('AbortError'))) throw err
+    console.warn('[portrait] Pollinations failed after retries, trying server route:', err)
   }
 
-  // Server-side fallback (handles Perchance, or if direct call failed)
+  // Last-resort server route (may also hit rate limits but worth trying once)
   const res = await fetch('/api/portrait', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt, negativePrompt, provider, quality, imageStyle, portraitType }),
+    body: JSON.stringify({ prompt, negativePrompt, provider: 'pollinations', quality, imageStyle, portraitType }),
     signal,
   })
   if (!res.ok) {

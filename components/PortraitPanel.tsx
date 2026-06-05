@@ -52,7 +52,7 @@ function PortraitPanel({ character, imageUrl, isLoadingImage, imageStartedAt, qu
   }, [onImageLoad])
 
   const showLoading = !!character && isLoadingImage && !imgError
-  const estimate = quality === 'high' ? 20 : 9
+  const estimate = quality === 'high' ? 60 : 40
   const remaining = Math.max(0, estimate - elapsed)
   const progress = Math.min(100, Math.round((elapsed / estimate) * 100))
 
@@ -265,7 +265,7 @@ function PortraitPanel({ character, imageUrl, isLoadingImage, imageStartedAt, qu
               </p>
               <p className="font-crimson italic mt-1"
                 style={{ fontSize: '0.68rem', color: 'rgba(201,168,76,0.34)' }}>
-                {elapsed < estimate ? `ca. ${remaining}s tilbage` : `stadig i gang · ${elapsed}s`}
+                {elapsed < 10 ? 'Sender forespørgsel…' : elapsed < estimate ? `ca. ${remaining}s tilbage` : `Venter på plads i kø · ${elapsed}s`}
               </p>
               <div className="mt-3 h-px w-40 overflow-hidden" style={{ background: 'rgba(201,168,76,0.13)' }}>
                 <div style={{ width: `${progress}%`, height: '100%', background: 'rgba(201,168,76,0.48)', transition: 'width 0.35s ease' }} />
