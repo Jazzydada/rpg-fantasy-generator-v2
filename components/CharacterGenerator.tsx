@@ -98,11 +98,52 @@ function toPromptInput(char: Character): PromptInput {
 type ImageMode = 'auto' | 'perchance' | 'pollinations'
 type GeneratedPortrait = { url: string; provider: 'perchance' | 'pollinations'; fallbackReason?: string }
 
-async function fetchGeneratedImage(prompt: string, negativePrompt: string, provider: ImageMode, quality: 'fast' | 'high', imageStyle: string, portraitType: string): Promise<GeneratedPortrait> {
+// ─── Direct browser → Pollinations (bypasses Vercel IP / shared queue) ────────
+// When called from the user's browser, each visitor has their own IP address.
+// This means no shared rate-limit or queue — Pollinations treats each user
+// independently. Server-side calls from Vercel share a small pool of datacenter
+// IPs, which is why the queue builds up there.
+//
+// Model selection:
+//   fast  → "flux"         ≈ 6-10s, good quality
+//   high  → "flux-realism" ≈ 10-18s, cinematic quality
+// Both are free with no API key. CORS is enabled on Pollinations.
+async function fetchPollinationsDirect(
+  prompt: string,
+  quality: 'fast' | 'high',
+  signal?: AbortSignal,
+): Promise<string> {
+  const { w, h } = quality === 'high' ? { w: 768, h: 1024 } : { w: 512, h: 768 }
+  const model    = quality === 'high' ? 'flux-realism' : 'flux'
+  const seed     = `${Date.now()}-${Math.floor(Math.random() * 1_000_000)}`
+  const url      = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${w}&height=${h}&nologo=true&seed=${seed}&model=${model}&enhance=false&safe=true&cache=false`
+
+  const res = await fetch(url, { signal, headers: { 'Accept': 'image/*' } })
+  if (!res.ok) throw new Error(`Pollinations direct HTTP ${res.status}`)
+  const blob = await res.blob()
+  if (blob.size < 5000) throw new Error('Pollinations returned an empty image')
+  return URL.createObjectURL(blob)
+}
+
+async function fetchGeneratedImage(prompt: string, negativePrompt: string, provider: ImageMode, quality: 'fast' | 'high', imageStyle: string, portraitType: string, signal?: AbortSignal): Promise<GeneratedPortrait> {
+  // Try direct browser call first — faster, no shared queue
+  if (provider === 'auto' || provider === 'pollinations') {
+    try {
+      const url = await fetchPollinationsDirect(prompt, quality, signal)
+      return { url, provider: 'pollinations' }
+    } catch (err) {
+      // If aborted, rethrow — don't fall back
+      if (err instanceof Error && err.name === 'AbortError') throw err
+      console.warn('[portrait] Direct browser call failed, falling back to server route:', err)
+    }
+  }
+
+  // Server-side fallback (handles Perchance, or if direct call failed)
   const res = await fetch('/api/portrait', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ prompt, negativePrompt, provider, quality, imageStyle, portraitType }),
+    signal,
   })
   if (!res.ok) {
     const body = await res.json().catch(() => ({})) as Record<string, unknown>
@@ -344,7 +385,7 @@ export default function CharacterGenerator() {
     // Run asynchronously — caller is NOT awaited
     ;(async () => {
       try {
-        const result = await fetchGeneratedImage(prompt, negative, mode, q, imageStyle, portraitType)
+        const result = await fetchGeneratedImage(prompt, negative, mode, q, imageStyle, portraitType, controller.signal)
         // Discard if a newer request has already completed or been cancelled
         if (controller.signal.aborted || portraitGenRef.current !== myGen) return
         pendingCache.current = { key: cacheKey, url: result.url }
