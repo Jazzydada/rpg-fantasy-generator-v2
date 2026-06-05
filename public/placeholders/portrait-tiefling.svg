@@ -1,0 +1,30 @@
+<svg viewBox="0 0 200 270" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="36%" r="72%">
+      <stop offset="0%" stop-color="#180410"/>
+      <stop offset="100%" stop-color="#0c0208"/>
+    </radialGradient>
+  </defs>
+  <rect width="200" height="270" fill="url(#bg)"/>
+  <rect x="10" y="10" width="180" height="250" fill="none" stroke="#c84060" stroke-width="0.9" stroke-opacity="0.28"/>
+  <rect x="14" y="14" width="172" height="242" fill="none" stroke="#c84060" stroke-width="0.4" stroke-opacity="0.12"/>
+  <path d="M10 10 L10 24 M10 10 L24 10" stroke="#c84060" stroke-width="1.5" stroke-opacity="0.65" fill="none" stroke-linecap="round"/>
+  <path d="M190 10 L190 24 M190 10 L176 10" stroke="#c84060" stroke-width="1.5" stroke-opacity="0.65" fill="none" stroke-linecap="round"/>
+  <path d="M10 260 L10 246 M10 260 L24 260" stroke="#c84060" stroke-width="1.5" stroke-opacity="0.65" fill="none" stroke-linecap="round"/>
+  <path d="M190 260 L190 246 M190 260 L176 260" stroke="#c84060" stroke-width="1.5" stroke-opacity="0.65" fill="none" stroke-linecap="round"/>
+  <circle cx="100" cy="148" r="80" fill="none" stroke="#c84060" stroke-width="0.6" stroke-opacity="0.14"/>
+  <circle cx="100" cy="148" r="65" fill="none" stroke="#c84060" stroke-width="0.4" stroke-opacity="0.09"/>
+  <line x1="100.0" y1="68.0" x2="100.0" y2="75.0" stroke="#c84060" stroke-width="0.8" stroke-opacity="0.30"/><line x1="156.6" y1="91.4" x2="151.6" y2="96.4" stroke="#c84060" stroke-width="0.8" stroke-opacity="0.30"/><line x1="180.0" y1="148.0" x2="173.0" y2="148.0" stroke="#c84060" stroke-width="0.8" stroke-opacity="0.30"/><line x1="156.6" y1="204.6" x2="151.6" y2="199.6" stroke="#c84060" stroke-width="0.8" stroke-opacity="0.30"/><line x1="100.0" y1="228.0" x2="100.0" y2="221.0" stroke="#c84060" stroke-width="0.8" stroke-opacity="0.30"/><line x1="43.4" y1="204.6" x2="48.4" y2="199.6" stroke="#c84060" stroke-width="0.8" stroke-opacity="0.30"/><line x1="20.0" y1="148.0" x2="27.0" y2="148.0" stroke="#c84060" stroke-width="0.8" stroke-opacity="0.30"/><line x1="43.4" y1="91.4" x2="48.4" y2="96.4" stroke="#c84060" stroke-width="0.8" stroke-opacity="0.30"/>
+  <path d="M100 86 C96 96 88 102 92 114 C96 122 100 126 100 126 C100 126 104 122 108 114 C112 102 104 96 100 86Z M100 100 C98 106 95 110 97 116 C99 120 100 122 100 122 C100 122 101 120 103 116 C105 110 102 106 100 100Z" fill="#c84060" fill-opacity="0.2" stroke="#c84060" stroke-width="0.5" stroke-opacity="0.24"/>
+  
+  <ellipse cx="100" cy="68" rx="22" ry="24" fill="rgba(3,2,1,0.97)"/>
+  <path d="M78 52 C64 36 58 20 68 14 C72 12 76 20 75 36 C77 44 79 50 82 54" fill="rgba(3,2,1,0.97)"/>
+  <path d="M122 52 C136 36 142 20 132 14 C128 12 124 20 125 36 C123 44 121 50 118 54" fill="rgba(3,2,1,0.97)"/>
+  <path d="M79 46 C70 40 66 52 68 64 C70 72 76 74 80 68" fill="rgba(3,2,1,0.97)"/>
+  <rect x="93" y="90" width="14" height="12" rx="2" fill="rgba(3,2,1,0.97)"/>
+  <path d="M28 130 C30 108 53 98 100 96 C147 98 170 108 172 130 L167 226 L33 226 Z" fill="rgba(3,2,1,0.97)"/>
+  <ellipse cx="34" cy="122" rx="21" ry="13" fill="rgba(3,2,1,0.97)"/>
+  <ellipse cx="166" cy="122" rx="21" ry="13" fill="rgba(3,2,1,0.97)"/>
+  <rect x="72" y="176" width="56" height="5" rx="2" fill="rgba(5,3,1,0.90)"/>
+  <text x="100" y="254" text-anchor="middle" font-family="Georgia, serif" font-size="7" letter-spacing="2.5" fill="#c84060" fill-opacity="0.48">TIEFLING</text>
+</svg>

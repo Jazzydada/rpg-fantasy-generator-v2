@@ -1,0 +1,29 @@
+<svg viewBox="0 0 200 270" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="36%" r="72%">
+      <stop offset="0%" stop-color="#1c0a02"/>
+      <stop offset="100%" stop-color="#100602"/>
+    </radialGradient>
+  </defs>
+  <rect width="200" height="270" fill="url(#bg)"/>
+  <rect x="10" y="10" width="180" height="250" fill="none" stroke="#d4a020" stroke-width="0.9" stroke-opacity="0.28"/>
+  <rect x="14" y="14" width="172" height="242" fill="none" stroke="#d4a020" stroke-width="0.4" stroke-opacity="0.12"/>
+  <path d="M10 10 L10 24 M10 10 L24 10" stroke="#d4a020" stroke-width="1.5" stroke-opacity="0.65" fill="none" stroke-linecap="round"/>
+  <path d="M190 10 L190 24 M190 10 L176 10" stroke="#d4a020" stroke-width="1.5" stroke-opacity="0.65" fill="none" stroke-linecap="round"/>
+  <path d="M10 260 L10 246 M10 260 L24 260" stroke="#d4a020" stroke-width="1.5" stroke-opacity="0.65" fill="none" stroke-linecap="round"/>
+  <path d="M190 260 L190 246 M190 260 L176 260" stroke="#d4a020" stroke-width="1.5" stroke-opacity="0.65" fill="none" stroke-linecap="round"/>
+  <circle cx="100" cy="148" r="80" fill="none" stroke="#d4a020" stroke-width="0.6" stroke-opacity="0.14"/>
+  <circle cx="100" cy="148" r="65" fill="none" stroke="#d4a020" stroke-width="0.4" stroke-opacity="0.09"/>
+  <line x1="100.0" y1="68.0" x2="100.0" y2="75.0" stroke="#d4a020" stroke-width="0.8" stroke-opacity="0.30"/><line x1="156.6" y1="91.4" x2="151.6" y2="96.4" stroke="#d4a020" stroke-width="0.8" stroke-opacity="0.30"/><line x1="180.0" y1="148.0" x2="173.0" y2="148.0" stroke="#d4a020" stroke-width="0.8" stroke-opacity="0.30"/><line x1="156.6" y1="204.6" x2="151.6" y2="199.6" stroke="#d4a020" stroke-width="0.8" stroke-opacity="0.30"/><line x1="100.0" y1="228.0" x2="100.0" y2="221.0" stroke="#d4a020" stroke-width="0.8" stroke-opacity="0.30"/><line x1="43.4" y1="204.6" x2="48.4" y2="199.6" stroke="#d4a020" stroke-width="0.8" stroke-opacity="0.30"/><line x1="20.0" y1="148.0" x2="27.0" y2="148.0" stroke="#d4a020" stroke-width="0.8" stroke-opacity="0.30"/><line x1="43.4" y1="91.4" x2="48.4" y2="96.4" stroke="#d4a020" stroke-width="0.8" stroke-opacity="0.30"/>
+  <path d="M100 88 C88 96 80 108 84 120 C88 130 96 132 100 132 C104 132 112 130 116 120 C120 108 112 96 100 88Z" fill="#d4a020" fill-opacity="0.054" stroke="#d4a020" stroke-width="0.8" stroke-opacity="0.18"/><path d="M94 88 L88 78 M106 88 L112 78 M100 88 L100 78" stroke="#d4a020" stroke-width="1.0" stroke-opacity="0.18" stroke-linecap="round"/>
+  
+  <path d="M74 72 C72 44 82 30 100 28 C118 30 128 44 126 72 C126 86 116 98 100 100 C84 100 74 86 74 72Z" fill="rgba(3,2,1,0.97)"/>
+  <path d="M86 86 Q100 102 114 86 Q107 105 100 108 Q93 105 86 86Z" fill="rgba(3,2,1,0.97)"/>
+  <path d="M93 100 L89 110 L100 112 L111 110 L107 100" fill="rgba(3,2,1,0.97)"/>
+  <rect x="93" y="110" width="14" height="10" rx="2" fill="rgba(3,2,1,0.97)"/>
+  <path d="M24 134 C26 108 50 98 100 96 C150 98 174 108 176 134 L171 228 L29 228 Z" fill="rgba(3,2,1,0.97)"/>
+  <ellipse cx="30" cy="124" rx="22" ry="14" fill="rgba(3,2,1,0.97)"/>
+  <ellipse cx="170" cy="124" rx="22" ry="14" fill="rgba(3,2,1,0.97)"/>
+  <rect x="72" y="179" width="56" height="5" rx="2" fill="rgba(5,3,1,0.90)"/>
+  <text x="100" y="254" text-anchor="middle" font-family="Georgia, serif" font-size="7" letter-spacing="2.5" fill="#d4a020" fill-opacity="0.48">DRAGONBORN</text>
+</svg>

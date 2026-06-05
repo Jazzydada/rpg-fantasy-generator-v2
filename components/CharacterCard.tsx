@@ -174,7 +174,7 @@ function InfoCard({ title, children, onReroll, variant = 'traits', icon }: { tit
 }
 
 function DesktopRedesign({ character, imageUrl, isGenerating, isLoadingImage, imageStartedAt, quality, onImageLoad, onZoom, onRerollName, onRerollField, lang }: Props & { lang: Lang }) {
-  const portraitProps = { character, imageUrl, isLoadingImage, imageStartedAt, quality, onImageLoad, onZoom }
+  const portraitProps = { character, imageUrl, isLoadingImage, imageStartedAt, quality, onImageLoad, onZoom, lang }
 
   if (isGenerating || !character) {
     return (

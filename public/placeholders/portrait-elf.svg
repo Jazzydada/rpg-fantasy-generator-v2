@@ -1,0 +1,30 @@
+<svg viewBox="0 0 200 270" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="36%" r="72%">
+      <stop offset="0%" stop-color="#061820"/>
+      <stop offset="100%" stop-color="#020c10"/>
+    </radialGradient>
+  </defs>
+  <rect width="200" height="270" fill="url(#bg)"/>
+  <rect x="10" y="10" width="180" height="250" fill="none" stroke="#7ad4d8" stroke-width="0.9" stroke-opacity="0.28"/>
+  <rect x="14" y="14" width="172" height="242" fill="none" stroke="#7ad4d8" stroke-width="0.4" stroke-opacity="0.12"/>
+  <path d="M10 10 L10 24 M10 10 L24 10" stroke="#7ad4d8" stroke-width="1.5" stroke-opacity="0.65" fill="none" stroke-linecap="round"/>
+  <path d="M190 10 L190 24 M190 10 L176 10" stroke="#7ad4d8" stroke-width="1.5" stroke-opacity="0.65" fill="none" stroke-linecap="round"/>
+  <path d="M10 260 L10 246 M10 260 L24 260" stroke="#7ad4d8" stroke-width="1.5" stroke-opacity="0.65" fill="none" stroke-linecap="round"/>
+  <path d="M190 260 L190 246 M190 260 L176 260" stroke="#7ad4d8" stroke-width="1.5" stroke-opacity="0.65" fill="none" stroke-linecap="round"/>
+  <circle cx="100" cy="148" r="80" fill="none" stroke="#7ad4d8" stroke-width="0.6" stroke-opacity="0.14"/>
+  <circle cx="100" cy="148" r="65" fill="none" stroke="#7ad4d8" stroke-width="0.4" stroke-opacity="0.09"/>
+  <line x1="100.0" y1="68.0" x2="100.0" y2="75.0" stroke="#7ad4d8" stroke-width="0.8" stroke-opacity="0.30"/><line x1="156.6" y1="91.4" x2="151.6" y2="96.4" stroke="#7ad4d8" stroke-width="0.8" stroke-opacity="0.30"/><line x1="180.0" y1="148.0" x2="173.0" y2="148.0" stroke="#7ad4d8" stroke-width="0.8" stroke-opacity="0.30"/><line x1="156.6" y1="204.6" x2="151.6" y2="199.6" stroke="#7ad4d8" stroke-width="0.8" stroke-opacity="0.30"/><line x1="100.0" y1="228.0" x2="100.0" y2="221.0" stroke="#7ad4d8" stroke-width="0.8" stroke-opacity="0.30"/><line x1="43.4" y1="204.6" x2="48.4" y2="199.6" stroke="#7ad4d8" stroke-width="0.8" stroke-opacity="0.30"/><line x1="20.0" y1="148.0" x2="27.0" y2="148.0" stroke="#7ad4d8" stroke-width="0.8" stroke-opacity="0.30"/><line x1="43.4" y1="91.4" x2="48.4" y2="96.4" stroke="#7ad4d8" stroke-width="0.8" stroke-opacity="0.30"/>
+  <path d="M100 88 C86 98 82 112 100 128 C118 112 114 98 100 88Z M100 88 L100 128" fill="#7ad4d8" fill-opacity="0.066" stroke="#7ad4d8" stroke-width="0.8" stroke-opacity="0.22"/>
+  
+  <ellipse cx="100" cy="63" rx="21" ry="23" fill="rgba(3,2,1,0.97)"/>
+  <path d="M121 49 L133 36 L125 53" fill="rgba(3,2,1,0.97)"/>
+  <path d="M79 48 C69 38 63 50 66 63 C68 72 74 75 79 70" fill="rgba(3,2,1,0.97)"/>
+  <rect x="93" y="84" width="14" height="12" rx="2" fill="rgba(3,2,1,0.97)"/>
+  <path d="M30 128 C32 108 54 98 100 96 C146 98 168 108 170 128 L165 225 L35 225 Z" fill="rgba(3,2,1,0.97)"/>
+  <ellipse cx="36" cy="120" rx="19" ry="12" fill="rgba(3,2,1,0.97)"/>
+  <ellipse cx="164" cy="120" rx="19" ry="12" fill="rgba(3,2,1,0.97)"/>
+  <rect x="72" y="174" width="56" height="5" rx="2" fill="rgba(5,3,1,0.90)"/>
+  <path d="M85 97 Q100 104 115 97" fill="none" stroke="#7ad4d8" stroke-width="0.8" stroke-opacity="0.14"/>
+  <text x="100" y="254" text-anchor="middle" font-family="Georgia, serif" font-size="7" letter-spacing="2.5" fill="#7ad4d8" fill-opacity="0.48">HIGH ELF</text>
+</svg>
