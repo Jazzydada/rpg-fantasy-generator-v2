@@ -126,7 +126,7 @@ function SmallReroll({ onClick, title = 'Reroll' }: { onClick?: () => void; titl
 // howtoplay  = dark bronze       (How To Play — GM guidance strip)
 const CARD_THEMES = {
   accent:     { bg: 'linear-gradient(145deg,#d9bd84,#b98745)',                                  border: 'rgba(63,38,12,0.65)',     title: '#2a1304', divider: 'rgba(48,20,5,0.28)',       text: { color: '#211006', fontSize: 'clamp(0.78rem,1.34vw,0.92rem)', lineHeight: 1.34, fontWeight: 600 } as React.CSSProperties },
-  stat:       { bg: 'linear-gradient(145deg,rgba(38,14,58,0.62),rgba(14,6,22,0.95))',           border: 'rgba(150,90,210,0.48)',   title: '#b07ee0', divider: 'rgba(150,90,210,0.25)',    text: { color: '#e4d4f8', fontSize: 'clamp(0.86rem,1.55vw,1.02rem)', lineHeight: 1.42, fontWeight: 700 } as React.CSSProperties },
+  stat:       { bg: 'linear-gradient(145deg,rgba(38,14,58,0.62),rgba(14,6,22,0.95))',           border: 'rgba(150,90,210,0.48)',   title: '#b07ee0', divider: 'rgba(150,90,210,0.25)',    text: { color: '#e4d4f8', fontSize: 'clamp(0.72rem,1.1vw,0.88rem)', lineHeight: 1.3, fontWeight: 700, wordBreak: 'break-word' } as React.CSSProperties },
   appearance: { bg: 'linear-gradient(145deg,rgba(6,24,8,0.97),rgba(4,14,5,0.97))',              border: 'rgba(50,160,70,0.48)',    title: '#5ec870', divider: 'rgba(50,160,70,0.22)',     text: { color: '#c8f0d0', fontSize: 'clamp(0.78rem,1.25vw,0.9rem)', lineHeight: 1.35 } as React.CSSProperties },
   impression: { bg: 'linear-gradient(145deg,rgba(8,26,24,0.97),rgba(4,14,12,0.97))',            border: 'rgba(60,140,120,0.40)',   title: '#5ec4aa', divider: 'rgba(60,140,120,0.22)',    text: { color: '#c2e8e0', fontStyle: 'italic', fontSize: 'clamp(0.92rem,1.62vw,1.08rem)', lineHeight: 1.45 } as React.CSSProperties },
   traits:     { bg: 'linear-gradient(145deg,rgba(28,8,50,0.62),rgba(12,4,22,0.97))',            border: 'rgba(130,60,210,0.50)',   title: '#a87ee8', divider: 'rgba(130,60,210,0.25)',    text: { color: '#e0d0f8', fontSize: 'clamp(0.86rem,1.55vw,1.02rem)', lineHeight: 1.42 } as React.CSSProperties },
@@ -182,11 +182,10 @@ function DesktopRedesign({ character, imageUrl, isGenerating, isLoadingImage, im
   return (
     <div className="hidden md:grid" style={{
       position: 'relative',
-      aspectRatio: '4 / 5',
       gridTemplateRows: 'auto 1fr auto',
       gap: 10,
       padding: 18,
-      overflow: 'hidden',
+      overflow: 'visible',
       background: [
         'radial-gradient(ellipse at 20% 0%, rgba(87,45,11,0.35), transparent 46%)',
         'linear-gradient(145deg, #22170b 0%, #120c06 52%, #080604 100%)',
@@ -204,8 +203,8 @@ function DesktopRedesign({ character, imageUrl, isGenerating, isLoadingImage, im
         <SmallReroll onClick={onRerollName} title="Rul navn om" />
       </header>
 
-      <main style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: '31% 1fr', gap: 12, minHeight: 0 }}>
-        <aside style={{ display: 'grid', gridTemplateRows: 'auto auto 1fr', gap: 10, minHeight: 0 }}>
+      <main style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: '31% 1fr', gap: 12, alignItems: 'start' }}>
+        <aside style={{ display: 'grid', gridTemplateRows: 'auto auto auto', gap: 10 }}>
           <div style={{ border: '1px solid rgba(201,168,76,0.28)', background: '#050403', padding: 7, boxShadow: 'inset 0 0 25px rgba(0,0,0,0.65)' }}>
             <div style={{ position: 'relative', aspectRatio: '3 / 4', overflow: 'hidden', background: '#080604' }}>
               <PortraitPanel key={imageUrl ?? 'empty'} {...portraitProps} />
@@ -292,18 +291,18 @@ function DesktopRedesign({ character, imageUrl, isGenerating, isLoadingImage, im
           </InfoCard>
         </aside>
 
-        <section style={{ display: 'grid', gridTemplateRows: 'auto auto 1fr auto', gap: 10, minHeight: 0 }}>
+        <section style={{ display: 'grid', gridTemplateRows: 'auto auto auto auto auto', gap: 10 }}>
           <InfoCard title={t(lang, 'firstImpression')} variant="impression">
             {tr(character, lang, 'firstImpression')}
           </InfoCard>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 7 }}>
-            <InfoCard title={t(lang, 'race')} variant="stat"><b>{tr(character, lang, 'species')}</b></InfoCard>
-            <InfoCard title={t(lang, 'class')} variant="stat"><b>{tr(character, lang, 'characterClass')}</b></InfoCard>
-            <InfoCard title={t(lang, 'alignment')} variant="stat"><b>{tr(character, lang, 'alignment')}</b></InfoCard>
-            <InfoCard title={t(lang, 'level')} variant="stat"><b>{character.level}</b></InfoCard>
+            <InfoCard title={t(lang, 'race')} variant="stat"><b style={{ fontSize: 'clamp(0.72rem,1.1vw,0.88rem)', wordBreak: 'break-word', hyphens: 'auto' }}>{tr(character, lang, 'species')}</b></InfoCard>
+            <InfoCard title={t(lang, 'class')} variant="stat"><b style={{ fontSize: 'clamp(0.72rem,1.1vw,0.88rem)', wordBreak: 'break-word', hyphens: 'auto' }}>{tr(character, lang, 'characterClass')}</b></InfoCard>
+            <InfoCard title={t(lang, 'alignment')} variant="stat"><b style={{ fontSize: 'clamp(0.72rem,1.1vw,0.88rem)', wordBreak: 'break-word', hyphens: 'auto' }}>{tr(character, lang, 'alignment')}</b></InfoCard>
+            <InfoCard title={t(lang, 'level')} variant="stat"><b style={{ fontSize: 'clamp(0.72rem,1.1vw,0.88rem)' }}>{character.level}</b></InfoCard>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 3px 1fr', gap: '0 8px', minHeight: 0, overflow: 'hidden' }}>
-            <div style={{ display: 'grid', gridTemplateRows: 'repeat(4,1fr)', gap: 8, minHeight: 0 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 3px 1fr', gap: '0 8px' }}>
+            <div style={{ display: 'grid', gap: 8, alignContent: 'start' }}>
               <InfoCard variant="traits" title={t(lang, 'personalityTrait')} onReroll={() => onRerollField('personalityTrait')}>{tr(character, lang, 'personalityTrait')}</InfoCard>
               <InfoCard variant="traits" title={t(lang, 'ideal')} onReroll={() => onRerollField('ideal')}>{tr(character, lang, 'ideal')}</InfoCard>
               <InfoCard variant="traits" title={t(lang, 'bond')} onReroll={() => onRerollField('bond')}>{tr(character, lang, 'bond')}</InfoCard>
@@ -311,7 +310,7 @@ function DesktopRedesign({ character, imageUrl, isGenerating, isLoadingImage, im
             </div>
             {/* vertical divider */}
             <div style={{ background: 'linear-gradient(to bottom, transparent, rgba(100,60,180,0.30) 20%, rgba(50,100,200,0.30) 80%, transparent)', borderRadius: 2 }} />
-            <div style={{ display: 'grid', gridTemplateRows: 'repeat(4,1fr)', gap: 8, minHeight: 0 }}>
+            <div style={{ display: 'grid', gap: 8, alignContent: 'start' }}>
               <InfoCard variant="story" title={t(lang, 'motivation')} onReroll={() => onRerollField('motivation')}>{tr(character, lang, 'motivation')}</InfoCard>
               <InfoCard variant="story" title={t(lang, 'secret')} onReroll={() => onRerollField('secret')}>{tr(character, lang, 'secret')}</InfoCard>
               <InfoCard variant="story" title={t(lang, 'mannerism')} onReroll={() => onRerollField('mannerism')}>{tr(character, lang, 'mannerism')}</InfoCard>

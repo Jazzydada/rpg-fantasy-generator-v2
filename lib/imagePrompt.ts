@@ -40,7 +40,7 @@ const RACE_EN: Record<string, string> = {
     'faint halo or divine light aura, celestial heritage visible in face and bearing. ' +
     'DO NOT depict as: ordinary human, angel with full wings',
 
-  'Drakbåren':
+  'Dragonborn':
     'dragonborn, MANDATORY: reptilian humanoid, dragon scales covering entire body, ' +
     'draconic snout and face, no human nose, scaled neck and hands, dragon-like facial structure. ' +
     'DO NOT depict as: human, elf, or any non-reptilian humanoid',
@@ -295,7 +295,7 @@ export const SPECIES_VISUAL_PRIORITY: Record<string, SpeciesDescriptor> = {
       'infernal features, full angel wings, elf ears, orc features, dark skin tones',
   },
 
-  'Drakbåren': {
+  'Dragonborn': {
     visual:
       'DRAGONBORN. DRAGON-BLOODED. ' +
       'REPTILIAN HUMANOID. Dragon scales covering entire body and face. ' +
@@ -325,7 +325,7 @@ export const SPECIES_VISUAL_PRIORITY_EN: Record<string, SpeciesDescriptor> = {
   'Orc':                 SPECIES_VISUAL_PRIORITY['Ork'],
   'Tiefling':            SPECIES_VISUAL_PRIORITY['Tiefling'],
   'Aasimar':             SPECIES_VISUAL_PRIORITY['Aasimar'],
-  'Dragonborn':          SPECIES_VISUAL_PRIORITY['Drakbåren'],
+  'Dragonborn':          SPECIES_VISUAL_PRIORITY['Dragonborn'],
 }
 // END SPECIES VISUAL SYSTEM
 

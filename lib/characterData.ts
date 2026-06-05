@@ -3,7 +3,7 @@
 export const RACES = [
   'Menneske',
   'Aasimar',
-  'Drakbåren',
+  'Dragonborn',
   'Bjergdværg',
   'Bakkedværg',
   'Højalv',
@@ -21,7 +21,7 @@ export const RACES = [
 export const RACIAL_BONUSES: Record<string, string> = {
   'Menneske':             '+1 alle evner · Heltemod (Inspiration 1/dag)',
   'Aasimar':              '+2 Karisma · Helbredende hænder · Lysemission',
-  'Drakbåren':            '+2 Styrke, +1 Karisma · Drageånde (2d6)',
+  'Dragonborn':            '+2 Styrke, +1 Karisma · Drageånde (2d6)',
   'Bjergdværg':           '+2 Konstitution, +1 Styrke · Dværgerstathed',
   'Bakkedværg':           '+2 Konstitution, +1 Visdom · Dværgerehardighed',
   'Højalv':               '+2 Smidighed, +1 Intelligens · Arkaisk magi (trylleformular)',
@@ -94,7 +94,7 @@ export const ART_STYLES = ['painterly', 'dark', 'heroic', 'gritty', 'ethereal'] 
 export const NAMES_MALE: Record<string, { first: string[]; last: string[] }> = {
   'Menneske':             { first: ['Aldric', 'Caelan', 'Dorian', 'Edric', 'Garrett', 'Roland', 'Henrik', 'Theron', 'Bram', 'Marcus', 'Aldus', 'Corvin', 'Darian', 'Emeric', 'Faolan'], last: ['Ashford', 'Blackwood', 'Crane', 'Dawnridge', 'Evermore', 'Fairfax', 'Greystone', 'Holloway', 'Ironwood', 'Kingsley', 'Locke', 'Marsh'] },
   'Aasimar':              { first: ['Caelum', 'Theron', 'Ardael', 'Vael', 'Cassiel', 'Auriel', 'Solaren', 'Elyon', 'Radael', 'Lithonel'], last: ['Dawnborn', 'Lightweaver', 'Holyblood', 'Starmantle', 'Radiantborn', 'Celestine'] },
-  'Drakbåren':            { first: ['Arjhan', 'Balasar', 'Bharash', 'Donaar', 'Ghesh', 'Heskan', 'Kriv', 'Medrash', 'Nadarr', 'Rhogar', 'Tarhun', 'Torinn'], last: ['Clethtinthiallor', 'Daardendrian', 'Delmirev', 'Fenkenkabradon', 'Kimbatuul', 'Norixius', 'Ophinshtalajiir'] },
+  'Dragonborn':            { first: ['Arjhan', 'Balasar', 'Bharash', 'Donaar', 'Ghesh', 'Heskan', 'Kriv', 'Medrash', 'Nadarr', 'Rhogar', 'Tarhun', 'Torinn'], last: ['Clethtinthiallor', 'Daardendrian', 'Delmirev', 'Fenkenkabradon', 'Kimbatuul', 'Norixius', 'Ophinshtalajiir'] },
   'Bjergdværg':           { first: ['Aldus', 'Bofri', 'Darrak', 'Eberk', 'Fargrim', 'Harbek', 'Kildrak', 'Tordek', 'Veit', 'Rurik', 'Bromdar', 'Odran', 'Thordin'], last: ['Anvil', 'Deepdelve', 'Grimhammer', 'Mountainborn', 'Stonewall', 'Thunderpeak', 'Ironfist', 'Rockseam', 'Stonebrow', 'Deepforge'] },
   'Bakkedværg':           { first: ['Baldrak', 'Gimbal', 'Kordor', 'Orsik', 'Thoradin', 'Baern', 'Darren', 'Flint', 'Grubben', 'Nurdrak'], last: ['Battlehammer', 'Boulderfoot', 'Cragborn', 'Deepaxe', 'Fireforge', 'Ironmantle', 'Loderr', 'Torunn'] },
   'Højalv':               { first: ['Caladrel', 'Fenrith', 'Halatir', 'Kaelis', 'Paeris', 'Arandur', 'Eradan', 'Gaelindor', 'Ilphas', 'Laerindel', 'Tharivol', 'Valandil'], last: ['Brightmantle', 'Dawnwhisper', 'Evenstar', 'Frostweave', 'Goldenleaf', 'Sunsong', 'Moonwhisper', 'Starweave', 'Silverthread'] },
@@ -112,7 +112,7 @@ export const NAMES_MALE: Record<string, { first: string[]; last: string[] }> = {
 export const NAMES_FEMALE: Record<string, { first: string[]; last: string[] }> = {
   'Menneske':             { first: ['Mira', 'Seraphina', 'Lyra', 'Vivienne', 'Isolde', 'Cassandra', 'Morgana', 'Elara', 'Evelyn', 'Rowena', 'Celeste', 'Adela', 'Brynn', 'Dara', 'Fiona', 'Gwendolyn'], last: ['Ashford', 'Blackwood', 'Crane', 'Dawnridge', 'Evermore', 'Fairfax', 'Greystone', 'Holloway', 'Ironwood', 'Kingsley', 'Locke', 'Marsh'] },
   'Aasimar':              { first: ['Seraph', 'Zephyrine', 'Luminara', 'Celeste', 'Solène', 'Nephara', 'Eliara', 'Aurielle', 'Caelia', 'Lumineth', 'Seraphel', 'Vaela'], last: ['Dawnborn', 'Lightweaver', 'Holyblood', 'Starmantle', 'Radiantborn', 'Celestine'] },
-  'Drakbåren':            { first: ['Akra', 'Biri', 'Mishann', 'Sora', 'Kava', 'Perra', 'Raiann', 'Nala', 'Forah', 'Tamara'], last: ['Clethtinthiallor', 'Daardendrian', 'Delmirev', 'Fenkenkabradon', 'Kimbatuul', 'Norixius', 'Ophinshtalajiir'] },
+  'Dragonborn':            { first: ['Akra', 'Biri', 'Mishann', 'Sora', 'Kava', 'Perra', 'Raiann', 'Nala', 'Forah', 'Tamara'], last: ['Clethtinthiallor', 'Daardendrian', 'Delmirev', 'Fenkenkabradon', 'Kimbatuul', 'Norixius', 'Ophinshtalajiir'] },
   'Bjergdværg':           { first: ['Brunhild', 'Gunnloda', 'Mardred', 'Ilde', 'Vistra', 'Dagny', 'Helga', 'Ingrid', 'Sigrid', 'Thyra', 'Astrid', 'Bergit', 'Gudrun'], last: ['Anvil', 'Deepdelve', 'Grimhammer', 'Mountainborn', 'Stonewall', 'Thunderpeak', 'Ironfist', 'Rockseam', 'Stonebrow', 'Deepforge'] },
   'Bakkedværg':           { first: ['Dorinda', 'Hilda', 'Marblida', 'Kathra', 'Artin', 'Anbera', 'Riswynn', 'Torbera', 'Sannl', 'Dotta', 'Gundra', 'Lokki', 'Marta'], last: ['Battlehammer', 'Boulderfoot', 'Cragborn', 'Deepaxe', 'Fireforge', 'Ironmantle', 'Loderr', 'Torunn'] },
   'Højalv':               { first: ['Aelindra', 'Eriadne', 'Gilraen', 'Issilra', 'Liriel', 'Miravel', 'Nyrindel', 'Sylvara', 'Thalindra', 'Vaelindra', 'Zylvara', 'Ariel', 'Caladwen', 'Elenwe', 'Galadriel', 'Irime'], last: ['Brightmantle', 'Dawnwhisper', 'Evenstar', 'Frostweave', 'Goldenleaf', 'Sunsong', 'Moonwhisper', 'Starweave', 'Silverthread'] },
@@ -536,7 +536,7 @@ export const APPEARANCE_DETAILS: Record<string, string[]> = {
     'Halen er altid indpakket i slidt læder',
     'Et ar fra et helligt mærke brænder rødt ved varme',
   ],
-  'Drakbåren': [
+  'Dragonborn': [
     'En skæl mangler på det venstre kindben og blotter mørkere hud',
     'Kløerne er afstumpede fra år med arbejde i sten',
     'Ét øje er blakket fra en gammel kamp',

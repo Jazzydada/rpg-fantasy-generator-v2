@@ -22,7 +22,7 @@ export const RACES_EN = [
 export const RACE_DA_TO_EN: Record<string, string> = {
   'Menneske':              'Human',
   'Aasimar':               'Aasimar',
-  'Drakbåren':             'Dragonborn',
+  'Dragonborn':             'Dragonborn',
   'Bjergdværg':            'Mountain Dwarf',
   'Bakkedværg':            'Hill Dwarf',
   'Højalv':                'High Elf',

@@ -30,6 +30,12 @@ function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)]
 }
 
+/** Defensive guard: replace any string that contains raw template syntax, "undefined", or "NaN" */
+function safeStr(value: string, fallback: string): string {
+  if (!value || value.includes('${') || value.includes('undefined') || value === 'NaN') return fallback
+  return value
+}
+
 // START I18N REROLL FIX
 // Character objects store display values, but most generator tables are keyed by
 // the original Danish values. These helpers convert display values back to the
@@ -51,7 +57,7 @@ function internalAlignment(value: string): string { return ALIGNMENT_EN_TO_DA[va
 
 // ─── Weighted race selection ───────────────────────────────────────────────────
 // Reflects real-world D&D population distribution: Mennesker dominerer,
-// Alver og Dværge er velkendte, sjældne racer som Goliath og Drakbåren
+// Alver og Dværge er velkendte, sjældne racer som Goliath og Dragonborn
 // dukker kun op lejlighedsvis.
 const RACE_WEIGHTS: Record<string, number> = {
   'Menneske':              20,  // dominerende — langt den mest almindelige race
@@ -67,7 +73,7 @@ const RACE_WEIGHTS: Record<string, number> = {
   'Tiefling':               4,  // sjælden, møder fordomme
   'Mørkalv':                3,  // meget sjælden — lever primært under jorden
   'Aasimar':                3,  // meget sjælden — guddommelig arv
-  'Drakbåren':              2,  // sjælden og iøjnefaldende
+  'Dragonborn':              2,  // sjælden og iøjnefaldende
   'Goliath':                2,  // sjælden — lever i isolation
 }
 
@@ -97,7 +103,7 @@ function modNumber(score: number): number {
 }
 
 function signed(n: number): string {
-  return n >= 0 ? '+${n}' : '${n}'
+  return n >= 0 ? `+${n}` : `${n}`
 }
 
 // ─── Alignment axis helpers ───────────────────────────────────────────────────
@@ -275,7 +281,7 @@ function getNameForRace(race: string, gender?: 'male' | 'female'): string {
               : gender === 'female' ? NAMES_FEMALE
               : NAMES
   const pool = pools[race] ?? NAMES[race] ?? NAMES['Menneske']
-  return '${pick(pool.first)} ${pick(pool.last)}'
+  return `${pick(pool.first)} ${pick(pool.last)}`
 }
 
 function getAppearanceForGender(species: string, gender: 'male' | 'female'): string {
@@ -338,7 +344,7 @@ function damageDieForWeapon(weapon: string): string {
 function buildAttack(name: string, abilityMod: number, prof: number, damageType: string, notes: string): AttackBlock {
   const toHit = signed(abilityMod + prof)
   const dmgMod = abilityMod === 0 ? '' : signed(abilityMod)
-  return { name, toHit, damage: '${damageDieForWeapon(name)}${dmgMod} ${damageType}', notes }
+  return { name, toHit, damage: `${damageDieForWeapon(name)}${dmgMod} ${damageType}`, notes }
 }
 
 function specialAbilitiesForClass(cls: string): string[] {
@@ -583,7 +589,7 @@ function englishOr(raw: string, table: Record<string, string>): string {
 const SPECIES_EN: Record<string, string> = {
   'Menneske':               'human',
   'Aasimar':                'aasimar with celestial ancestry and radiant divine appearance',
-  'Drakbåren':              'dragonborn reptilian humanoid with dragon scales and draconic face',
+  'Dragonborn':              'dragonborn reptilian humanoid with dragon scales and draconic face',
   'Bjergdværg':             'mountain dwarf, short and broad, braided beard',
   'Bakkedværg':             'hill dwarf, short and stout, braided beard',
   'Højalv':                 'high elf with pointed ears and ethereal beauty',
@@ -634,7 +640,7 @@ export function buildEnglishPrompts(character: Pick<Character, 'name' | 'species
   // Level tier: higher level = richer/more powerful; alignment colours HOW that manifests
   const tier = levelTierDescriptor(character.level ?? 1, alignmentKey)
 
-  const characterLine = '${character.name}, ${raceFeatures}, ${classEn}, level ${character.level ?? 1} ${tier.tier}'
+  const characterLine = `${character.name}, ${raceFeatures}, ${classEn}, level ${character.level ?? 1} ${tier.tier}`
 
   // START SPECIES VISUAL SYSTEM + START CLASS VISUAL SYSTEM + START FACE QUALITY SYSTEM
   // Priority order: 1. Composition  2. Species  3. Class  4. Style  5. Details
@@ -671,28 +677,28 @@ export function buildEnglishPrompts(character: Pick<Character, 'name' | 'species
     // 5. Style anchor
     'Dungeons and Dragons 2024 sourcebook illustration. Professional fantasy RPG NPC illustration.',
     // 6. Character details
-    'CHARACTER: ${character.name}, level ${character.level ?? 1} ${tier.tier}',
-    'APPEARANCE: ${appearanceEn}',
-    'EQUIPMENT: ${itemEn}, ${tier.gear}',
-    'WEALTH AND STATUS: ${tier.wealth}',
-    'BEARING AND PRESENCE: ${tier.bearing}',
-    'BODY LANGUAGE: ${mannerismEn}',
-    'FIRST IMPRESSION: ${firstImpressionEn}',
+    `CHARACTER: ${character.name}, level ${character.level ?? 1} ${tier.tier}`,
+    `APPEARANCE: ${appearanceEn}`,
+    `EQUIPMENT: ${itemEn}, ${tier.gear}`,
+    `WEALTH AND STATUS: ${tier.wealth}`,
+    `BEARING AND PRESENCE: ${tier.bearing}`,
+    `BODY LANGUAGE: ${mannerismEn}`,
+    `FIRST IMPRESSION: ${firstImpressionEn}`,
     'visible weapons, visible armor, visible belt pouches, visible accessories',
     'natural asymmetric pose, clear readable silhouette',
     'STYLE: cinematic fantasy art, highly detailed professional RPG character portrait, dramatic cinematic lighting, painterly realism',
     'MOOD: story-rich, believable NPC, atmospheric background, sharp focus',
-    speciesNeg ? 'NOT: ${speciesNeg}' : '',
+    speciesNeg ? `NOT: ${speciesNeg}` : '',
   ].filter(Boolean).join(', ')
   // END SPECIES VISUAL SYSTEM / END CLASS VISUAL SYSTEM / END FACE QUALITY SYSTEM
 
   const midjourneyPrompt = [
-    '${character.name}, ${raceFeatures}, ${classEn}, level ${character.level ?? 1} ${tier.tier}',
-    'MANDATORY RACE: ${raceFeatures}',
-    'appearance: ${appearanceEn}',
-    'carrying ${itemEn}',
-    'equipment quality: ${tier.gear}',
-    'bearing: ${tier.bearing}',
+    `${character.name}, ${raceFeatures}, ${classEn}, level ${character.level ?? 1} ${tier.tier}`,
+    `MANDATORY RACE: ${raceFeatures}`,
+    `appearance: ${appearanceEn}`,
+    `carrying ${itemEn}`,
+    `equipment quality: ${tier.gear}`,
+    `bearing: ${tier.bearing}`,
     'three-quarter body portrait, full costume visible, equipment visible, head to knees minimum',
     'cinematic fantasy art, D&D 2024 sourcebook illustration, highly detailed, painterly realism',
     'atmospheric background, dramatic cinematic lighting, sharp focus',
@@ -721,17 +727,19 @@ export function buildEnglishPrompts(character: Pick<Character, 'name' | 'species
 export function generateCombatStats(characterClass: string, level: number, scores: AbilityScores): CombatStats {
   const classInfo = CLASS_INFO[characterClass] ?? { hitDie: 'd8', primaryAbility: 'Styrke' }
   const prof = proficiencyForLevel(level)
-  const dex = modNumber(scores.dexterity)
-  const con = modNumber(scores.constitution)
-  const wis = modNumber(scores.wisdom)
-  const primary = classPrimaryModifier(scores, characterClass)
+  // Guard against undefined/NaN ability scores — default to 10 (modifier = 0)
+  const safeScore = (v: number | undefined): number => (Number.isFinite(v) ? (v as number) : 10)
+  const dex = modNumber(safeScore(scores?.dexterity))
+  const con = modNumber(safeScore(scores?.constitution))
+  const wis = modNumber(safeScore(scores?.wisdom))
+  const primary = classPrimaryModifier({ strength: safeScore(scores?.strength), dexterity: safeScore(scores?.dexterity), constitution: safeScore(scores?.constitution), intelligence: safeScore(scores?.intelligence), wisdom: safeScore(scores?.wisdom), charisma: safeScore(scores?.charisma) }, characterClass)
   const hitDie = parseHitDie(classInfo.hitDie)
   const baseHp = hitDie + con + Math.max(0, level - 1) * (Math.ceil(hitDie / 2) + 1 + con)
   const armorBonus = ['Kriger', 'Paladin'].includes(characterClass) ? 16 : ['Barbar', 'Jæger', 'Warlock'].includes(characterClass) ? 13 : 11
   const armorClass = Math.max(10, armorBonus + Math.min(dex, ['Kriger', 'Paladin'].includes(characterClass) ? 1 : 3))
   const meleeName = meleeWeaponForClass(characterClass)
   const rangedName = rangedWeaponForClass(characterClass)
-  const meleeMod = ['Troldmand', 'Troldkarl'].includes(characterClass) ? dex : Math.max(modNumber(scores.strength), dex, primary)
+  const meleeMod = ['Troldmand', 'Troldkarl'].includes(characterClass) ? dex : Math.max(modNumber(safeScore(scores?.strength)), dex, primary)
   const rangedMod = rangedName === 'Cantrip' ? primary : dex
 
   return {
@@ -778,13 +786,13 @@ function buildNpcLayer(name: string, species: string, characterClass: string, ba
   const motivation      = lang === 'en' ? moPair.en : moPair.da
   const secret          = lang === 'en' ? sePair.en : sePair.da
   const mannerism       = lang === 'en' ? maPair.en : maPair.da
-  const relationship    = lang === 'en' ? '${rvPair.en} ${rtPair.en}' : '${rvPair.da} ${rtPair.da}'
+  const relationship    = safeStr(lang === 'en' ? `${rvPair.en} ${rtPair.en}` : `${rvPair.da} ${rtPair.da}`, lang === 'en' ? 'has a complicated history with a local figure' : 'har en kompliceret fortid med en lokal person')
   const sceneHook       = lang === 'en' ? shPair.en : shPair.da
   const howToPlay       = lang === 'en' ? htpPair.en : htpPair.da
 
   const gmSummary = lang === 'en'
-    ? '${name} is a ${species.toLowerCase()} ${characterClass.toLowerCase()}. ${fiPair.en} They ${moPair.en} Secret: ${sePair.en}'
-    : '${name} er en ${species.toLowerCase()} ${characterClass.toLowerCase()}. ${fiPair.da} Personen ${moPair.da} Hemmelighed: ${sePair.da}'
+    ? `${name} is a ${species.toLowerCase()} ${characterClass.toLowerCase()}. ${fiPair.en} They ${moPair.en} Secret: ${sePair.en}`
+    : `${name} er en ${species.toLowerCase()} ${characterClass.toLowerCase()}. ${fiPair.da} Personen ${moPair.da} Hemmelighed: ${sePair.da}`
 
   const prompts = buildEnglishPrompts({
     name, species, characterClass, appearance, inventoryItem: pick(INVENTORY_ITEMS), firstImpression: fiPair.da, mannerism: maPair.da, level, alignment,
@@ -797,20 +805,20 @@ function buildNpcLayer(name: string, species: string, characterClass: string, ba
       motivation:      moPair.da,
       secret:          sePair.da,
       mannerism:       maPair.da,
-      relationship:    '${rvPair.da} ${rtPair.da}',
+      relationship:    `${rvPair.da} ${rtPair.da}`,
       sceneHook:       shPair.da,
       howToPlay:       htpPair.da,
-      gmSummary:       '${name} er en ${species.toLowerCase()} ${characterClass.toLowerCase()}. ${fiPair.da} Personen ${moPair.da} Hemmelighed: ${sePair.da}',
+      gmSummary:       `${name} er en ${species.toLowerCase()} ${characterClass.toLowerCase()}. ${fiPair.da} Personen ${moPair.da} Hemmelighed: ${sePair.da}`,
     },
     en: {
       firstImpression: fiPair.en,
       motivation:      moPair.en,
       secret:          sePair.en,
       mannerism:       maPair.en,
-      relationship:    '${rvPair.en} ${rtPair.en}',
+      relationship:    `${rvPair.en} ${rtPair.en}`,
       sceneHook:       shPair.en,
       howToPlay:       htpPair.en,
-      gmSummary:       '${name} is a ${species.toLowerCase()} ${characterClass.toLowerCase()}. ${fiPair.en} They ${moPair.en} Secret: ${sePair.en}',
+      gmSummary:       `${name} is a ${species.toLowerCase()} ${characterClass.toLowerCase()}. ${fiPair.en} They ${moPair.en} Secret: ${sePair.en}`,
     },
   }
 
@@ -819,7 +827,7 @@ function buildNpcLayer(name: string, species: string, characterClass: string, ba
 // END INSTANT LANGUAGE SWITCH
 
 export function rerollName(character: Character): Character {
-  return refreshPrompts({ ...character, id: '${character.id}_name_${Date.now()}', name: getNameForRace(internalRace(character.species)) })
+  return refreshPrompts({ ...character, id: `${character.id}_name_${Date.now()}`, name: getNameForRace(internalRace(character.species)) })
 }
 
 export function rerollCoreTraits(character: Character, lang: Lang = 'da'): Character {
@@ -838,7 +846,7 @@ export function rerollCoreTraits(character: Character, lang: Lang = 'da'): Chara
   const prev = character.translations ?? { da: {} as never, en: {} as never }
   return {
     ...character,
-    id: '${character.id}_traits_${Date.now()}',
+    id: `${character.id}_traits_${Date.now()}`,
     personalityTrait: lang === 'en' ? pt.en : pt.da,
     ideal:            lang === 'en' ? id.en : id.da,
     bond:             lang === 'en' ? bd.en : bd.da,
@@ -867,7 +875,7 @@ export function rerollNpcTraits(character: Character, lang: Lang = 'da'): Charac
   const prev = character.translations ?? { da: {} as never, en: {} as never }
   return {
     ...character,
-    id: '${character.id}_npc_${Date.now()}',
+    id: `${character.id}_npc_${Date.now()}`,
     ...npcLayerBase,
     ...prompts,
     translations: {
@@ -898,7 +906,7 @@ function refreshPrompts(character: Character): Character {
 
 export function rerollSingleField(character: Character, field: RerollField, lang: Lang = 'da'): Character {
   // START INSTANT LANGUAGE SWITCH — always reroll both DA and EN simultaneously
-  const next: Character = { ...character, id: '${character.id}_${field}_${Date.now()}' }
+  const next: Character = { ...character, id: `${character.id}_${field}_${Date.now()}` }
   const prev = character.translations ?? { da: {} as never, en: {} as never }
   const newTr = { da: { ...prev.da }, en: { ...prev.en } }
 
@@ -964,9 +972,9 @@ export function rerollSingleField(character: Character, field: RerollField, lang
   if (field === 'relationship') {
     const rv = pickBothFlat(RELATION_VERBS,   RELATION_VERBS_EN)
     const rt = pickBothFlat(RELATION_TARGETS, RELATION_TARGETS_EN)
-    next.relationship = lang === 'en' ? '${rv.en} ${rt.en}' : '${rv.da} ${rt.da}'
-    newTr.da.relationship = '${rv.da} ${rt.da}'
-    newTr.en.relationship = '${rv.en} ${rt.en}'
+    next.relationship = lang === 'en' ? `${rv.en} ${rt.en}` : `${rv.da} ${rt.da}`
+    newTr.da.relationship = `${rv.da} ${rt.da}`
+    newTr.en.relationship = `${rv.en} ${rt.en}`
   }
   if (field === 'sceneHook') {
     const p = pickBothFlat(SCENE_HOOKS, SCENE_HOOKS_EN)
@@ -983,7 +991,7 @@ export function setCharacterLevel(character: Character, level: number): Characte
   const safeLevel = Math.max(1, Math.min(20, Math.round(level)))
   // Rebuild prompts with the new level so portrait tier descriptors update too
   const updatedChar = { ...character, level: safeLevel, combatStats: generateCombatStats(internalClass(character.characterClass), safeLevel, character.abilityScores) }
-  return refreshPrompts({ ...updatedChar, id: '${character.id}_level_${safeLevel}_${Date.now()}' })
+  return refreshPrompts({ ...updatedChar, id: `${character.id}_level_${safeLevel}_${Date.now()}` })
 }
 
 export function rerollCombat(character: Character): Character {
@@ -997,7 +1005,7 @@ export function rerollCombat(character: Character): Character {
   }
   return {
     ...character,
-    id: '${character.id}_combat_${Date.now()}',
+    id: `${character.id}_combat_${Date.now()}`,
     abilityScores,
     combatStats: generateCombatStats(internalClass(character.characterClass), character.level, abilityScores),
   }
@@ -1098,7 +1106,7 @@ export function generateCharacter(lang: Lang = 'da'): Character {
   const imagePrompt = generateImagePrompt({
     name, species: speciesInternal, characterClass: characterClassInternal,
     background: backgroundInternal, alignment: alignmentInternal,
-    appearance: '${promptLayer.perchancePrompt}', inventoryItem, artStyle,
+    appearance: `${promptLayer.perchancePrompt}`, inventoryItem, artStyle,
     gender, // START GENDER CONSISTENCY SYSTEM
   })
 
@@ -1134,7 +1142,7 @@ export function generateCharacter(lang: Lang = 'da'): Character {
   // END INSTANT LANGUAGE SWITCH
 
   return {
-    id: 'char_${Date.now()}_${Math.random().toString(36).slice(2, 7)}',
+    id: `char_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
     name,
     species,
     characterClass,
